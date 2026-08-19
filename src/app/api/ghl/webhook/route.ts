@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     received_at: now,
   };
 
-  const writes: Promise<unknown>[] = [
+  const writes = [
     supabase.from("ghl_event_log").upsert(eventRow, {
       onConflict: "user_id,external_event_id",
     }),

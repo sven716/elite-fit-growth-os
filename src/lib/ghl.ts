@@ -152,7 +152,7 @@ function fallbackName(firstName: string | null, lastName: string | null) {
   return [firstName, lastName].filter(Boolean).join(" ").trim() || "Onbekende lead";
 }
 
-function slug(value: string | null) {
+function slug(value: string | null | undefined) {
   return (value ?? "")
     .toLowerCase()
     .normalize("NFD")
