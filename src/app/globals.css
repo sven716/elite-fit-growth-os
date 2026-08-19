@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* ===== Elite Fit brand tokens ===== */
+@theme {
+  --color-bg: #1a1e2e;
+  --color-terra: #b06662;
+  --color-terra-light: #d18e88;
+  --color-light: #f7f7fa;
+  --color-mid: #495471;
+  --color-mid-light: #66739a;
+  --color-rose: #845e68;
+  --font-sans: var(--font-lato), system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #1a1e2e;
+  color: #f7f7fa;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* ===== Decoratieve achtergrondlagen (vast aan de viewport) ===== */
+
+.ef-glows {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.ef-glows::before,
+.ef-glows::after {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+}
+.ef-glows::before {
+  top: -140px;
+  right: -110px;
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(
+    circle,
+    rgba(176, 102, 98, 0.3) 0%,
+    rgba(176, 102, 98, 0) 70%
+  );
+}
+.ef-glows::after {
+  bottom: -160px;
+  left: -130px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(
+    circle,
+    rgba(73, 84, 113, 0.32) 0%,
+    rgba(73, 84, 113, 0) 70%
+  );
+}
+
+.ef-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.ef-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 130px rgba(0, 0, 0, 0.5);
+}
+
+/* Terra-accenttekst met zachte gloed */
+.ef-accent {
+  color: #b06662;
+  text-shadow: 0 0 34px rgba(176, 102, 98, 0.55);
+}
+
+/* Progress-bar vulling: rose -> terra */
+.ef-progress-fill {
+  background: linear-gradient(90deg, #845e68, #b06662);
+  box-shadow: 0 0 10px rgba(176, 102, 98, 0.6);
+}
+
+/* Kaart-oppervlak */
+.ef-card {
+  background: linear-gradient(
+    155deg,
+    rgba(247, 247, 250, 0.05),
+    rgba(247, 247, 250, 0.02)
+  );
+  border: 1px solid rgba(247, 247, 250, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+/* Uitgelichte kaart met terra-rand (coach, CTA) */
+.ef-card-accent {
+  background: linear-gradient(
+    155deg,
+    rgba(176, 102, 98, 0.12),
+    rgba(176, 102, 98, 0.04)
+  );
+  border: 1px solid rgba(176, 102, 98, 0.3);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
