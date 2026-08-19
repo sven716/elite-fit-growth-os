@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
 import { DeleteButton } from "@/components/DeleteButton";
 import { createClient } from "@/lib/supabase/server";
@@ -70,6 +71,22 @@ export default async function KlantenPage() {
             </p>
           ) : null}
         </div>
+      </section>
+
+      <section className="ef-card-accent p-5">
+        <h2 className="mb-3 text-[11px] font-bold tracking-[0.18em] text-terra uppercase">
+          Klantenreviews
+        </h2>
+        <p className="mb-4 text-sm text-light/75">
+          Open hier direct de Gainz-reviewflow voor je laatste klantenreviews,
+          met signalen, bottleneck en intern advies per week.
+        </p>
+        <Link
+          href="/meer/gainz-reviewflow"
+          className="inline-flex items-center rounded-lg border-2 border-terra px-4 py-2.5 text-sm font-black text-terra transition-colors hover:bg-terra/10"
+        >
+          Open klantenreviews
+        </Link>
       </section>
 
       <section className="ef-card-accent p-5">
