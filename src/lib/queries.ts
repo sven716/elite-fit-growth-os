@@ -24,7 +24,7 @@ export type Goal = {
 export type Task = {
   id: string;
   title: string;
-  status: "open" | "klaar";
+  status: "open" | "klaar" | "gearchiveerd";
   due_date: string | null;
   category: "todo" | "opvolgen";
   source: "handmatig" | "plaud" | "fathom" | "ghl";
