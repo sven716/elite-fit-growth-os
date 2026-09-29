@@ -5,6 +5,11 @@ import {
   today,
 } from "@/lib/dates";
 import { computeStreak, shiftDays } from "@/lib/streak";
+import {
+  aggregateInstagramTotals,
+  type InstagramMediaPerformance,
+  type MarketingFunnelSnapshot,
+} from "@/lib/growth-dashboard";
 
 export type Goal = {
   id: string;
@@ -327,5 +332,51 @@ export async function getDailyFormula() {
         streak: computeStreak(dates, day),
       };
     }),
+  };
+}
+
+/* ---------- Groei: Instagram + GHL ---------- */
+
+export async function getGrowthDashboardData() {
+  const supabase = await createClient();
+
+  const [mediaRes, funnelRes] = await Promise.all([
+    supabase
+      .from("instagram_media_performance")
+      .select(
+        "id, external_media_id, caption, media_type, media_product_type, permalink, thumbnail_url, published_at, views, reach, likes, comments, saved, shares, total_interactions, total_watch_time_ms, avg_watch_time_ms, replies, follows, profile_visits, navigation, trigger_key, leads, email_leads, booked_calls, held_calls, won_customers, last_synced_at",
+      )
+      .order("published_at", { ascending: false })
+      .limit(120),
+    supabase
+      .from("marketing_funnel_snapshots")
+      .select(
+        "id, snapshot_date, period_start, period_end, contacts_total, contacts_with_email, contacts_with_source, instagram_sourced_contacts, opportunities_total, open_opportunities, won_opportunities, booked_calls, held_calls, confirmed_customer_starts, attributed_opportunities, unattributed_opportunities, unread_conversations, last_synced_at",
+      )
+      .order("snapshot_date", { ascending: false })
+      .order("last_synced_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const posts = (mediaRes.data ?? []) as InstagramMediaPerformance[];
+  const funnel = (funnelRes.data ?? null) as MarketingFunnelSnapshot | null;
+  const latestMediaSync = posts
+    .map((post) => post.last_synced_at)
+    .sort()
+    .at(-1);
+
+  return {
+    posts,
+    totals: aggregateInstagramTotals(posts),
+    funnel,
+    lastSyncedAt:
+      [latestMediaSync, funnel?.last_synced_at]
+        .filter((value): value is string => Boolean(value))
+        .sort()
+        .at(-1) ?? null,
+    errors: [mediaRes.error?.message, funnelRes.error?.message].filter(
+      (value): value is string => Boolean(value),
+    ),
   };
 }

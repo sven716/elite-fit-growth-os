@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const ALL_NAV = [
   { href: "/", label: "Cockpit" },
   { href: "/doelen", label: "Doelen" },
+  { href: "/groei", label: "Groei" },
   { href: "/planning", label: "Planning" },
   { href: "/taken", label: "Taken" },
   { href: "/klanten", label: "Klanten" },
@@ -27,6 +28,7 @@ const PRIMARY_NAV = [
 /** Schermen die onder "Meer" vallen — bepaalt of die knop actief oogt. */
 const UNDER_MORE = [
   "/meer",
+  "/groei",
   "/klanten",
   "/winnaarsformule",
   "/kosten",

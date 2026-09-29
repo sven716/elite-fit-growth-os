@@ -3,6 +3,11 @@ import { SectionHeading } from "@/components/SectionHeading";
 
 const LINKS = [
   {
+    href: "/groei",
+    label: "Groei",
+    hint: "Instagram-prestaties en GHL-funnel per post",
+  },
+  {
     href: "/klanten",
     label: "Klanten",
     hint: "Nieuwe klanten toevoegen en je klantenbestand",
