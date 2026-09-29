@@ -5,9 +5,13 @@ import { CheckRow } from "@/components/CheckRow";
 import { getCockpitData } from "@/lib/queries";
 import { toggleTask, toggleCheckin } from "@/lib/actions";
 import { daysUntil, formatShortDate } from "@/lib/dates";
+import { getIntegrationHealth } from "@/lib/platform-queries";
 
 export default async function CockpitPage() {
-  const data = await getCockpitData();
+  const [data, integrations] = await Promise.all([
+    getCockpitData(),
+    getIntegrationHealth(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -39,6 +43,33 @@ export default async function CockpitPage() {
           emptyHint="Wordt live opgehaald zodra de Moneybird-sync draait."
         />
       </section>
+
+      {integrations.length > 0 ? (
+        <section className="ef-card p-5">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-[11px] font-bold tracking-[0.18em] text-light/40 uppercase">
+              Live koppelingen
+            </h2>
+            <a href="/operations" className="text-xs font-bold text-terra">
+              Bekijken
+            </a>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {integrations.map((integration) => (
+              <span
+                key={integration.source}
+                className={`rounded-full border px-3 py-1.5 text-xs font-bold ${
+                  integration.status === "ok"
+                    ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-200"
+                    : "border-terra/30 bg-terra/10 text-terra-light"
+                }`}
+              >
+                {integration.source.replaceAll("_", " ")}
+              </span>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="ef-card p-5">
         <h2 className="mb-3 text-[11px] font-bold tracking-[0.18em] text-light/40 uppercase">

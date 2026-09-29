@@ -411,6 +411,13 @@ def build_sql(
         "confirmed_customer_starts=excluded.confirmed_customer_starts,attributed_opportunities=excluded.attributed_opportunities,"
         "unattributed_opportunities=excluded.unattributed_opportunities,last_synced_at=now();"
     )
+    statements.append(
+        "INSERT INTO public.integration_sync_status (user_id,source,status,last_started_at,last_completed_at,record_count,message) VALUES "
+        f"('{USER_ID}'::uuid,'instagram','ok',now(),now(),{len(media_rows)},NULL),"
+        f"('{USER_ID}'::uuid,'ghl','ok',now(),now(),{len(contacts) + len(opportunities)},NULL) "
+        "ON CONFLICT (user_id,source) DO UPDATE SET status=excluded.status,last_started_at=excluded.last_started_at,"
+        "last_completed_at=excluded.last_completed_at,record_count=excluded.record_count,message=excluded.message;"
+    )
     return "\n".join(statements)
 
 

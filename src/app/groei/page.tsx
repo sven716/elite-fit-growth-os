@@ -6,6 +6,7 @@ import {
   type InstagramMediaPerformance,
 } from "@/lib/growth-dashboard";
 import { getGrowthDashboardData } from "@/lib/queries";
+import { getWebsiteDashboardData } from "@/lib/platform-queries";
 
 function Metric({ label, value, hint }: { label: string; value: number | null; hint?: string }) {
   return (
@@ -117,7 +118,10 @@ function PostCard({ post }: { post: InstagramMediaPerformance }) {
 }
 
 export default async function GroeiPage() {
-  const data = await getGrowthDashboardData();
+  const [data, website] = await Promise.all([
+    getGrowthDashboardData(),
+    getWebsiteDashboardData(),
+  ]);
   const { totals, funnel } = data;
   const stale = isSyncStale(data.lastSyncedAt);
   const attributionRate = funnel?.opportunities_total
@@ -191,6 +195,36 @@ export default async function GroeiPage() {
           <div className="ef-card p-5 text-sm text-light/45">
             Nog geen GHL-meting geladen.
           </div>
+        )}
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-[11px] font-bold tracking-[0.18em] text-light/40 uppercase">
+          Website
+        </h2>
+        {website.snapshot ? (
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <Metric label="Sessies" value={website.snapshot.sessions} />
+              <Metric label="Bezoekers" value={website.snapshot.active_users} />
+              <Metric label="Paginaweergaven" value={website.snapshot.page_views} />
+              <Metric label="Leads" value={website.snapshot.generate_leads} />
+              <Metric label="CTA-klikken" value={website.snapshot.cta_clicks} />
+              <Metric label="Betrokken sessies" value={website.snapshot.engaged_sessions} />
+            </div>
+            {website.channels.length > 0 ? (
+              <div className="ef-card mt-3 overflow-hidden">
+                {website.channels.slice(0, 6).map((channel) => (
+                  <div key={channel.id} className="flex items-center justify-between border-b border-light/8 px-4 py-3 last:border-0">
+                    <span className="text-sm font-bold text-light/75">{channel.dimension_value}</span>
+                    <span className="text-sm text-light/45">{formatMetric(channel.sessions)} sessies</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="ef-card p-5 text-sm text-light/45">Nog geen websitegegevens geladen.</div>
         )}
       </section>
 

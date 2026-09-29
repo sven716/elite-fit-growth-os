@@ -8,6 +8,21 @@ const LINKS = [
     hint: "Instagram-prestaties en GHL-funnel per post",
   },
   {
+    href: "/sales",
+    label: "Sales",
+    hint: "Leads, gesprekken, conversie en datakwaliteit",
+  },
+  {
+    href: "/financien",
+    label: "Financiën",
+    hint: "Omzet, kosten, marge en openstaande facturen",
+  },
+  {
+    href: "/operations",
+    label: "Operations",
+    hint: "Koppelingen, synchronisaties en capaciteit",
+  },
+  {
     href: "/klanten",
     label: "Klanten",
     hint: "Nieuwe klanten toevoegen en je klantenbestand",
