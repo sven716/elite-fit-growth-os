@@ -17,6 +17,7 @@ import subprocess
 import time
 import urllib.parse
 import urllib.request
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -75,8 +76,15 @@ def parse_iso(value: str | None) -> dt.datetime | None:
     return parsed if parsed.tzinfo else parsed.replace(tzinfo=dt.timezone.utc)
 
 
-def euro(document: dict[str, Any]) -> float:
-    return num(document.get("total_price_incl_tax_base") or document.get("total_price_incl_tax"))
+def money(value: Any) -> Decimal:
+    try:
+        return Decimal(str(value or 0))
+    except (InvalidOperation, ValueError):
+        return Decimal("0")
+
+
+def euro_excl_tax(document: dict[str, Any]) -> Decimal:
+    return money(document.get("total_price_excl_tax_base") or document.get("total_price_excl_tax"))
 
 
 def list_moneybird_sales(admin_id: str) -> list[dict[str, Any]]:
@@ -133,22 +141,38 @@ def finance_values(
 
     sales = [invoice for invoice in invoices if in_range(invoice.get("invoice_date"))]
     costs = [purchase for purchase in purchases if in_range(purchase.get("date"))]
-    invoiced = sum(euro(invoice) for invoice in sales if invoice.get("state") != "draft")
-    paid = sum(euro(invoice) for invoice in sales if invoice.get("state") == "paid")
-    expenses = sum(euro(purchase) for purchase in costs)
-    outstanding = sum(num(invoice.get("total_unpaid_base") or invoice.get("total_unpaid")) for invoice in sales)
+    final_sales = [invoice for invoice in sales if invoice.get("state") not in {"draft", "scheduled", "cancelled"}]
+    invoiced = sum((euro_excl_tax(invoice) for invoice in final_sales), Decimal("0"))
+    paid = sum(
+        (
+            money(payment.get("price_base") or payment.get("price"))
+            for invoice in invoices
+            for payment in (invoice.get("payments") or [])
+            if in_range(payment.get("payment_date"))
+        ),
+        Decimal("0"),
+    )
+    expenses = sum((euro_excl_tax(purchase) for purchase in costs), Decimal("0"))
+    outstanding = sum(
+        (money(invoice.get("total_unpaid_base") or invoice.get("total_unpaid")) for invoice in final_sales),
+        Decimal("0"),
+    )
     late = [invoice for invoice in sales if str(invoice.get("state") or "").lower() == "late"]
-    overdue = sum(num(invoice.get("total_unpaid_base") or invoice.get("total_unpaid")) for invoice in late)
-    margin = paid - expenses
+    overdue = sum(
+        (money(invoice.get("total_unpaid_base") or invoice.get("total_unpaid")) for invoice in late),
+        Decimal("0"),
+    )
+    margin = invoiced - expenses
+    cents = Decimal("0.01")
     return {
-        "invoiced": round(invoiced, 2),
-        "paid": round(paid, 2),
-        "expenses": round(expenses, 2),
-        "outstanding": round(outstanding, 2),
-        "overdue": round(overdue, 2),
-        "margin": round(margin, 2),
-        "margin_percentage": round((margin / paid) * 100, 2) if paid else None,
-        "sales_count": len(sales),
+        "invoiced": invoiced.quantize(cents, rounding=ROUND_HALF_UP),
+        "paid": paid.quantize(cents, rounding=ROUND_HALF_UP),
+        "expenses": expenses.quantize(cents, rounding=ROUND_HALF_UP),
+        "outstanding": outstanding.quantize(cents, rounding=ROUND_HALF_UP),
+        "overdue": overdue.quantize(cents, rounding=ROUND_HALF_UP),
+        "margin": margin.quantize(cents, rounding=ROUND_HALF_UP),
+        "margin_percentage": ((margin / invoiced) * 100).quantize(cents, rounding=ROUND_HALF_UP) if invoiced else None,
+        "sales_count": len(final_sales),
         "purchase_count": len(costs),
         "overdue_count": len(late),
     }

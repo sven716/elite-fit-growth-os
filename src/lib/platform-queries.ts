@@ -164,7 +164,9 @@ export async function getSalesDashboardData() {
 
 export async function getOperationsDashboardData() {
   const supabase = await createClient();
-  const [snapshotResult, statusesResult] = await Promise.all([
+  const day = new Date().toISOString().slice(0, 10);
+  const monthStart = `${day.slice(0, 7)}-01`;
+  const [snapshotResult, statusesResult, tasksResult, clientsResult] = await Promise.all([
     latestRow<OperationsSnapshot>(
       "operations_snapshots",
       "id,snapshot_date,period_start,period_end,calendar_events,business_meetings,strategy_calls,coaching_calls,group_calls,focus_blocks,meeting_minutes,upcoming_7d_events,upcoming_7d_meeting_minutes,fathom_meetings,fathom_crm_matches,last_synced_at",
@@ -173,11 +175,29 @@ export async function getOperationsDashboardData() {
       .from("integration_sync_status")
       .select("id,source,status,last_started_at,last_completed_at,record_count,message")
       .order("source"),
+    supabase.from("tasks").select("id,due_date").eq("status", "open"),
+    supabase.from("clients").select("id,start_date,status"),
   ]);
+  const openTasks = tasksResult.data ?? [];
+  const clients = clientsResult.data ?? [];
   return {
     snapshot: snapshotResult.data,
     statuses: (statusesResult.data ?? []) as IntegrationStatus[],
-    errors: [snapshotResult.error, statusesResult.error?.message].filter((value): value is string => Boolean(value)),
+    taskDebt: {
+      open: openTasks.length,
+      overdue: openTasks.filter((task) => task.due_date && task.due_date < day).length,
+      withoutDate: openTasks.filter((task) => !task.due_date).length,
+    },
+    clients: {
+      active: clients.filter((client) => client.status === "actief").length,
+      startedThisMonth: clients.filter((client) => client.start_date && client.start_date >= monthStart).length,
+    },
+    errors: [
+      snapshotResult.error,
+      statusesResult.error?.message,
+      tasksResult.error?.message,
+      clientsResult.error?.message,
+    ].filter((value): value is string => Boolean(value)),
   };
 }
 
