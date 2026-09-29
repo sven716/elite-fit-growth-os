@@ -87,7 +87,7 @@ def fetch_instagram_media(since: dt.datetime) -> list[dict[str, Any]]:
     ig_user_id = str(account["id"])
     fields = (
         "id,caption,media_type,media_product_type,permalink,timestamp,"
-        "thumbnail_url,media_url,like_count,comments_count"
+        "thumbnail_url,like_count,comments_count"
     )
     def load_pages(use_server_since: bool) -> list[dict[str, Any]]:
         loaded: list[dict[str, Any]] = []
@@ -95,7 +95,7 @@ def fetch_instagram_media(since: dt.datetime) -> list[dict[str, Any]]:
         while True:
             request: dict[str, Any] = {
                 "ig_user_id": ig_user_id,
-                "limit": 100,
+                "limit": 10,
                 "fields": fields,
             }
             if use_server_since:
