@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elite Fit | Je gesprek staat erin</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<!--
+  ELITE FIT BEDANKPAGINA (na boeking in de GHL-kalender)
+  Hier vuurt het Meta-event "Schedule". Zet in GHL op deze funnelstap:
+    <script>fbq('track', 'Schedule');</script>
+  Invullen (zoek op "VERVANG"): je welkomstvideo en de links naar twee klantcases.
+-->
+<style>
+  :root { --bg:#1a1e2e; --bg-2:#222739; --terra:#b06662; --terra-light:#d18e88; --light:#f7f7fa; --muted:#b9bfd0; --line:rgba(247,247,250,.12); }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--light); }
+  body { font-family:"Lato",system-ui,sans-serif; font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  .wrap { max-width:760px; margin:0 auto; padding:0 20px; }
+  .topbar { padding:22px 0; border-bottom:1px solid var(--line); }
+  .logo { font-family:"Barlow Condensed",sans-serif; font-weight:800; font-size:26px; letter-spacing:.08em; }
+  .logo span, .accent { color:var(--terra); }
+  .display { font-family:"Barlow Condensed","Arial Narrow",sans-serif; text-transform:uppercase; font-weight:800; line-height:1.02; margin:0; }
+  .eyebrow { font-family:"Barlow Condensed",sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.14em; font-size:14px; color:var(--terra-light); }
+  .hero { padding:48px 0 24px; text-align:center; }
+  .hero h1 { font-size:clamp(40px,7vw,64px); margin:12px 0 14px; }
+  .hero p { color:var(--muted); margin:0 auto; max-width:560px; }
+  .video { position:relative; aspect-ratio:16/9; border-radius:14px; overflow:hidden; margin:32px 0; background:linear-gradient(135deg,#262c42,#1a1e2e); border:1px solid var(--line); }
+  .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .video .ph { position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); text-align:center; }
+  .play { width:72px; height:72px; border-radius:50%; background:var(--terra); margin:0 auto 12px; display:grid; place-items:center; }
+  .play::after { content:""; border-left:22px solid var(--light); border-top:14px solid transparent; border-bottom:14px solid transparent; margin-left:5px; }
+  .todo { list-style:none; padding:0; margin:0 0 40px; display:grid; gap:12px; }
+  .todo li { display:flex; gap:14px; align-items:flex-start; padding:16px 18px; border:1px solid var(--line); border-radius:10px; background:rgba(247,247,250,.04); }
+  .todo b { font-family:"Barlow Condensed",sans-serif; font-size:26px; color:var(--terra); line-height:1; min-width:26px; }
+  h2.display { font-size:34px; margin:0 0 18px; }
+  .cases { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:56px; }
+  .case { display:block; text-decoration:none; color:inherit; border-radius:14px; overflow:hidden; background:var(--bg-2); border:1px solid var(--line); }
+  .case .photo { aspect-ratio:4/5; position:relative; background:linear-gradient(160deg,#2a3048,#1a1e2e); }
+  .case .photo img { width:100%; height:100%; object-fit:cover; }
+  .case .tag { position:absolute; left:12px; bottom:12px; background:var(--terra); padding:4px 10px; border-radius:6px; font-family:"Barlow Condensed",sans-serif; font-weight:800; font-size:22px; }
+  .case .body { padding:14px 16px 18px; }
+  .case .name { font-family:"Barlow Condensed",sans-serif; font-weight:700; text-transform:uppercase; font-size:20px; }
+  .case p { margin:4px 0 0; font-size:15px; color:var(--muted); }
+  footer { padding:28px 0 40px; color:#66739a; font-size:13px; text-align:center; border-top:1px solid var(--line); }
+  @media (max-width:480px) { .cases { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap"><div class="logo">ELITE <span>FIT</span></div></div></header>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Stap 2 van 2 · voltooid</span>
+    <h1 class="display">Je gesprek staat erin. <span class="accent">Nog 1 ding.</span></h1>
+    <p>Bekijk deze korte video (2 minuten), zodat je weet wat je in het gesprek kunt verwachten.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="video">
+    <!-- VERVANG: embed je welkomstvideo, bijv. <iframe src="https://player.vimeo.com/video/XXXXXXX" allow="autoplay; fullscreen" allowfullscreen></iframe> -->
+    <div class="ph"><div><div class="play"></div>Welkomstvideo van Sven</div></div>
+  </div>
+
+  <h2 class="display">Zo haal je er het <span class="accent">meeste</span> uit</h2>
+  <ul class="todo">
+    <li><b>1</b><span>Zet het gesprek meteen in je agenda. Je krijgt ook een bevestiging via WhatsApp en e-mail.</span></li>
+    <li><b>2</b><span>Zit op een rustige plek met je camera aan.</span></li>
+    <li><b>3</b><span>Neem je beslissingen samen met je partner? Nodig hem of haar gerust uit om aan te sluiten. Dan hoef je achteraf niets uit te leggen.</span></li>
+  </ul>
+
+  <h2 class="display">Bekijk alvast deze <span class="accent">2 verhalen</span></h2>
+  <div class="cases">
+    <!-- VERVANG: href naar de klantvideo of case, foto in ./img/ -->
+    <a class="case" href="#">
+      <div class="photo"><img src="img/mart.jpg" alt="" onerror="this.remove()"><span class="tag">95 → 82 KG</span></div>
+      <div class="body"><div class="name">Mart</div><p>Afgevallen zonder zijn sociale leven op te geven.</p></div>
+    </a>
+    <a class="case" href="#">
+      <div class="photo"><img src="img/frits.jpg" alt="" onerror="this.remove()"><span class="tag">−23 KG</span></div>
+      <div class="body"><div class="name">Frits</div><p>Ging door, ook met een knieblessure.</p></div>
+    </a>
+  </div>
+</div>
+
+<footer><div class="wrap">© Elite Fit</div></footer>
+</body>
+</html>

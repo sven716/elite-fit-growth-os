@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Elite Fit ad-creatives</title>
+<link href="../fonts/fonts.css" rel="stylesheet">
+<!--
+  Elke .frame wordt door render.mjs als losse PNG opgeslagen (naam = id).
+  Foto's: zet ze in ./img/ (voor.jpg, na.jpg, sven.jpg). Ontbreekt een foto,
+  dan toont het vak een placeholder. Daarna opnieuw renderen:
+    node marketing/ads-funnel/ads/render.mjs
+-->
+<style>
+  :root { --bg:#1a1e2e; --bg-2:#222739; --terra:#b06662; --terra-light:#d18e88; --light:#f7f7fa; --muted:#b9bfd0; --mid:#495471; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0d0f17; padding:40px; display:flex; flex-wrap:wrap; gap:40px; font-family:"Lato",sans-serif; color:var(--light); }
+
+  .frame { position:relative; overflow:hidden; background:var(--bg); flex:none; }
+  .p45 { width:1080px; height:1350px; }
+  .p916 { width:1080px; height:1920px; }
+
+  /* sfeer */
+  .glow::before, .glow::after { content:""; position:absolute; border-radius:50%; pointer-events:none; }
+  .glow::before { width:900px; height:900px; right:-360px; top:-360px; background:radial-gradient(circle, rgba(176,102,98,.35) 0%, rgba(176,102,98,0) 68%); }
+  .glow::after { width:900px; height:900px; left:-420px; bottom:-420px; background:radial-gradient(circle, rgba(73,84,113,.55) 0%, rgba(73,84,113,0) 68%); }
+
+  .D { font-family:"Barlow Condensed","Arial Narrow",sans-serif; text-transform:uppercase; font-weight:900; line-height:.92; letter-spacing:-.005em; }
+  .t { color:var(--terra); }
+  .tl { color:var(--terra-light); }
+  .muted { color:var(--muted); }
+  .eyebrow { font-family:"Barlow Condensed",sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.16em; font-size:34px; color:var(--terra-light); }
+
+  .logo { position:absolute; left:80px; bottom:70px; font-family:"Barlow Condensed",sans-serif; font-weight:800; font-size:44px; letter-spacing:.1em; z-index:3; }
+  .logo span { color:var(--terra); }
+  .handle { position:absolute; right:80px; bottom:76px; font-size:30px; color:var(--muted); z-index:3; }
+  .p916 .logo { bottom:300px; } .p916 .handle { bottom:306px; } /* buiten de UI-zone van stories */
+
+  .cta { display:inline-block; background:var(--terra); color:var(--light); font-family:"Barlow Condensed",sans-serif; font-weight:800; text-transform:uppercase; font-size:46px; letter-spacing:.03em; padding:24px 44px; border-radius:16px; }
+
+  .photo { position:absolute; background:linear-gradient(160deg,#2c334c,#1d2132); overflow:hidden; }
+  .photo img { width:100%; height:100%; object-fit:cover; display:block; position:relative; z-index:1; }
+  .photo .ph { position:absolute; inset:0; display:grid; place-items:center; font-family:"Barlow Condensed",sans-serif; font-weight:700; letter-spacing:.2em; font-size:34px; color:rgba(247,247,250,.25); border:3px dashed rgba(247,247,250,.18); }
+  .lbl { position:absolute; z-index:2; top:28px; left:28px; background:rgba(26,30,46,.85); padding:8px 18px; border-radius:10px; font-family:"Barlow Condensed",sans-serif; font-weight:800; font-size:36px; letter-spacing:.08em; }
+  .lbl.na { background:var(--terra); }
+
+  .pad { position:absolute; left:80px; right:80px; z-index:2; }
+
+  /* carousel */
+  .num { position:absolute; top:80px; right:80px; font-family:"Barlow Condensed",sans-serif; font-weight:700; font-size:34px; color:var(--muted); letter-spacing:.1em; z-index:3; }
+  .big-n { font-family:"Barlow Condensed",sans-serif; font-weight:900; font-size:300px; line-height:.8; color:var(--terra); opacity:.95; }
+  .swipe { position:absolute; right:80px; bottom:76px; font-family:"Barlow Condensed",sans-serif; font-weight:700; font-size:34px; letter-spacing:.12em; color:var(--terra-light); z-index:3; }
+  .bar { width:120px; height:10px; background:var(--terra); border-radius:5px; }
+</style>
+</head>
+<body>
+
+<!-- ============ STATIC 1: RESULTAAT (4:5) ============ -->
+<div class="frame p45 glow" id="static-1-resultaat-4x5">
+  <div class="photo" style="left:80px; top:80px; width:450px; height:620px; border-radius:24px;">
+    <div class="ph">FOTO</div><img src="img/voor.jpg" alt="" onerror="this.remove()"><div class="lbl">VOOR</div>
+  </div>
+  <div class="photo" style="left:550px; top:80px; width:450px; height:620px; border-radius:24px;">
+    <div class="ph">FOTO</div><img src="img/na.jpg" alt="" onerror="this.remove()"><div class="lbl na">NA</div>
+  </div>
+  <div class="pad" style="top:760px">
+    <div class="D" style="font-size:170px"><span class="t">−10 KG.</span></div>
+    <div class="D" style="font-size:112px; margin-top:10px">Ischias weg.<br>Nekpijn weg.</div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="handle">Gratis strategiegesprek →</div>
+</div>
+
+<!-- ============ STATIC 1: RESULTAAT (9:16) ============ -->
+<div class="frame p916 glow" id="static-1-resultaat-9x16">
+  <div class="photo" style="left:80px; top:220px; width:450px; height:660px; border-radius:24px;">
+    <div class="ph">FOTO</div><img src="img/voor.jpg" alt="" onerror="this.remove()"><div class="lbl">VOOR</div>
+  </div>
+  <div class="photo" style="left:550px; top:220px; width:450px; height:660px; border-radius:24px;">
+    <div class="ph">FOTO</div><img src="img/na.jpg" alt="" onerror="this.remove()"><div class="lbl na">NA</div>
+  </div>
+  <div class="pad" style="top:930px">
+    <div class="D" style="font-size:180px"><span class="t">−10 KG.</span></div>
+    <div class="D" style="font-size:118px; margin-top:10px">Ischias weg.<br>Nekpijn weg.</div>
+    <div style="margin-top:44px"><span class="cta">Plan je gratis gesprek</span></div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+</div>
+
+<!-- ============ STATIC 2: CITAAT (4:5) ============ -->
+<div class="frame p45 glow" id="static-2-citaat-4x5">
+  <div class="pad" style="top:150px">
+    <div class="bar"></div>
+    <div class="D" style="font-size:186px; margin-top:56px">Informatie<br>is niet je<br>probleem.</div>
+    <div class="D t" style="font-size:186px; margin-top:28px">Volhouden<br>wel.</div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="handle">Gratis strategiegesprek →</div>
+</div>
+
+<!-- ============ STATIC 2: CITAAT (9:16) ============ -->
+<div class="frame p916 glow" id="static-2-citaat-9x16">
+  <div class="pad" style="top:240px">
+    <div class="bar"></div>
+    <div class="D" style="font-size:200px; margin-top:60px">Informatie<br>is niet je<br>probleem.</div>
+    <div class="D t" style="font-size:200px; margin-top:30px">Volhouden<br>wel.</div>
+    <div style="margin-top:70px"><span class="cta">Plan je gratis gesprek</span></div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+</div>
+
+<!-- ============ CAROUSEL (7 slides, 4:5) ============ -->
+<div class="frame p45 glow" id="carousel-01">
+  <div class="num">1/7</div>
+  <div class="pad" style="top:330px">
+    <div class="eyebrow">Elite Fit</div>
+    <div class="D" style="font-size:230px; margin-top:30px"><span class="t">5 redenen</span></div>
+    <div class="D" style="font-size:132px; margin-top:16px">waarom je elk jaar<br>opnieuw begint</div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="swipe">SWIPE →</div>
+</div>
+
+<div class="frame p45 glow" id="carousel-02">
+  <div class="num">2/7</div>
+  <div class="pad" style="top:280px">
+    <div class="big-n">1</div>
+    <div class="D" style="font-size:118px; margin-top:40px">Je plan werkt alleen<br>in een <span class="t">perfecte week</span></div>
+    <p class="muted" style="font-size:40px; line-height:1.45; margin-top:44px; max-width:860px">Eén drukke werkweek, een verjaardag of een slechte nacht en alles valt om. Een goed plan is gebouwd voor je drukste week.</p>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="swipe">SWIPE →</div>
+</div>
+
+<div class="frame p45 glow" id="carousel-03">
+  <div class="num">3/7</div>
+  <div class="pad" style="top:280px">
+    <div class="big-n">2</div>
+    <div class="D" style="font-size:118px; margin-top:40px">Je <span class="t">weekenden</span> maken<br>je werk ongedaan</div>
+    <p class="muted" style="font-size:40px; line-height:1.45; margin-top:44px; max-width:860px">Vijf dagen strak, twee dagen snacken. Maandag weeg je hetzelfde en denk je dat het niet werkt.</p>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="swipe">SWIPE →</div>
+</div>
+
+<div class="frame p45 glow" id="carousel-04">
+  <div class="num">4/7</div>
+  <div class="pad" style="top:280px">
+    <div class="big-n">3</div>
+    <div class="D" style="font-size:118px; margin-top:40px">Je slaapt te weinig<br>en <span class="t">eet het terug</span></div>
+    <p class="muted" style="font-size:40px; line-height:1.45; margin-top:44px; max-width:860px">Slaaptekort maakt je hongeriger en minder gemotiveerd. Slaap is geen bijzaak, het is je fundament.</p>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="swipe">SWIPE →</div>
+</div>
+
+<div class="frame p45 glow" id="carousel-05">
+  <div class="num">5/7</div>
+  <div class="pad" style="top:280px">
+    <div class="big-n">4</div>
+    <div class="D" style="font-size:118px; margin-top:40px">Je traint zonder<br><span class="t">progressie</span></div>
+    <p class="muted" style="font-size:40px; line-height:1.45; margin-top:44px; max-width:860px">Elke week hetzelfde gewicht, dezelfde herhalingen. Je lichaam heeft geen reden om te veranderen.</p>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="swipe">SWIPE →</div>
+</div>
+
+<div class="frame p45 glow" id="carousel-06">
+  <div class="num">6/7</div>
+  <div class="pad" style="top:280px">
+    <div class="big-n">5</div>
+    <div class="D" style="font-size:118px; margin-top:40px">Niemand<br><span class="t">stuurt je bij</span></div>
+    <p class="muted" style="font-size:40px; line-height:1.45; margin-top:44px; max-width:860px">Een app of schema van internet ziet niet dat je vastloopt. Een coach die elke week meekijkt wel.</p>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="swipe">SWIPE →</div>
+</div>
+
+<div class="frame p45 glow" id="carousel-07">
+  <div class="num">7/7</div>
+  <div class="pad" style="top:250px">
+    <div class="D" style="font-size:150px">Wil je het plan<br>dat dit <span class="t">oplost?</span></div>
+    <p class="muted" style="font-size:42px; line-height:1.45; margin-top:50px; max-width:860px">Ik stuur je gratis de gids die mijn klanten als eerste krijgen.</p>
+    <div style="margin-top:60px"><span class="cta" style="font-size:64px; padding:30px 56px">Stuur PLAN in mijn DM</span></div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+</div>
+
+<!-- ============ RETARGETING R3: SCHAARSTE (9:16 + 4:5) ============ -->
+<!-- VERVANG het aantal en de maand voordat je rendert. Alleen echte aantallen. -->
+<div class="frame p916 glow" id="retargeting-r3-plekken-9x16">
+  <div class="photo" style="left:0; top:0; width:1080px; height:1000px;">
+    <div class="ph">FOTO VAN SVEN</div><img src="img/sven.jpg" alt="" onerror="this.remove()">
+  </div>
+  <div style="position:absolute; left:0; right:0; top:600px; height:420px; background:linear-gradient(180deg, rgba(26,30,46,0) 0%, #1a1e2e 100%); z-index:1"></div>
+  <div class="pad" style="top:940px">
+    <div class="eyebrow">Ik begeleid iedereen zelf</div>
+    <div class="D" style="font-size:190px; margin-top:20px">Nog <span class="t">3 plekken</span></div>
+    <div class="D" style="font-size:120px; margin-top:6px">in november</div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="handle">Vraag je gesprek aan →</div>
+</div>
+
+<div class="frame p45 glow" id="retargeting-r3-plekken-4x5">
+  <div class="photo" style="left:0; top:0; width:1080px; height:760px;">
+    <div class="ph">FOTO VAN SVEN</div><img src="img/sven.jpg" alt="" onerror="this.remove()">
+  </div>
+  <div style="position:absolute; left:0; right:0; top:440px; height:340px; background:linear-gradient(180deg, rgba(26,30,46,0) 0%, #1a1e2e 100%); z-index:1"></div>
+  <div class="pad" style="top:720px">
+    <div class="eyebrow">Ik begeleid iedereen zelf</div>
+    <div class="D" style="font-size:176px; margin-top:16px">Nog <span class="t">3 plekken</span></div>
+    <div class="D" style="font-size:110px; margin-top:6px">in november</div>
+  </div>
+  <div class="logo">ELITE <span>FIT</span></div>
+  <div class="handle">Vraag je gesprek aan →</div>
+</div>
+
+<!-- ============ VIDEO-COVERS / HOOK-TITELS (9:16, transparant) ============ -->
+<!-- Leg deze over de eerste 3 seconden van je video's (CapCut/Premiere). -->
+<div class="frame p916" id="hook-video-1" style="background:transparent">
+  <div class="pad" style="top:330px; text-align:center">
+    <div class="D" style="font-size:118px; display:inline; background:var(--light); color:var(--bg); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Je weet wat je moet eten.</div><br>
+    <div class="D" style="font-size:118px; display:inline; background:var(--terra); color:var(--light); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Waarom houd je het niet vol?</div>
+  </div>
+</div>
+<div class="frame p916" id="hook-video-2" style="background:transparent">
+  <div class="pad" style="top:330px; text-align:center">
+    <div class="D" style="font-size:150px; display:inline; background:var(--terra); color:var(--light); padding:4px 26px; line-height:1.2">−23 KG</div><br>
+    <div class="D" style="font-size:110px; display:inline; background:var(--light); color:var(--bg); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">en hij ziet het zelf nog niet</div>
+  </div>
+</div>
+<div class="frame p916" id="hook-video-3" style="background:transparent">
+  <div class="pad" style="top:330px; text-align:center">
+    <div class="D" style="font-size:118px; display:inline; background:var(--light); color:var(--bg); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Na 3 weken afhaken?</div><br>
+    <div class="D" style="font-size:118px; display:inline; background:var(--terra); color:var(--light); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Het ligt niet aan je discipline</div>
+  </div>
+</div>
+<div class="frame p916" id="hook-video-4" style="background:transparent">
+  <div class="pad" style="top:330px; text-align:center">
+    <div class="D" style="font-size:118px; display:inline; background:var(--terra); color:var(--light); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Dit is niet voor iedereen</div>
+  </div>
+</div>
+<div class="frame p916" id="hook-video-5" style="background:transparent">
+  <div class="pad" style="top:330px; text-align:center">
+    <div class="D" style="font-size:118px; display:inline; background:var(--light); color:var(--bg); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Gratis gids?</div><br>
+    <div class="D" style="font-size:130px; display:inline; background:var(--terra); color:var(--light); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Stuur PLAN</div>
+  </div>
+</div>
+<div class="frame p916" id="hook-video-6" style="background:transparent">
+  <div class="pad" style="top:330px; text-align:center">
+    <div class="D" style="font-size:118px; display:inline; background:var(--light); color:var(--bg); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Doordeweeks perfect.</div><br>
+    <div class="D" style="font-size:118px; display:inline; background:var(--terra); color:var(--light); box-decoration-break:clone; -webkit-box-decoration-break:clone; padding:4px 22px; line-height:1.2">Maandag weeg je hetzelfde.</div>
+  </div>
+</div>
+
+</body>
+</html>

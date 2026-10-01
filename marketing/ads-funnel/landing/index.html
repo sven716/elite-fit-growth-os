@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elite Fit | Gratis strategiegesprek</title>
+<meta name="description" content="Binnen 6 maanden fitter, strakker en sterker, zonder crashdieet en zonder terugval. Vraag een gratis strategiegesprek aan met Sven van Elite Fit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<!--
+  ELITE FIT LANDINGSPAGINA (route A)
+  Invullen voor livegang (zoek op "VERVANG"):
+  1. VSL-video: plak de embed-URL van Vimeo/YouTube/GHL-video in de iframe bij #vsl
+  2. GHL-survey: plak de embedcode van je survey (Sites > Surveys > Integrate) in #aanvraag
+  3. Foto's: zet je bestanden in ./img/ met de namen hieronder, of vervang de src
+  4. Meta-pixel: plak je pixelcode in <head> (of zet hem in GHL op funnelniveau)
+-->
+<style>
+  :root {
+    --bg: #1a1e2e;
+    --bg-2: #222739;
+    --terra: #b06662;
+    --terra-light: #d18e88;
+    --light: #f7f7fa;
+    --mid: #495471;
+    --mid-light: #66739a;
+    --muted: #b9bfd0;
+    --line: rgba(247, 247, 250, 0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--light); }
+  body {
+    font-family: "Lato", system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  .wrap { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  .narrow { max-width: 760px; }
+  .display {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 1.02;
+    font-weight: 800;
+    margin: 0;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 14px;
+    color: var(--terra-light);
+  }
+  .accent { color: var(--terra); }
+
+  /* Top bar */
+  .topbar { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .logo {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 800; font-size: 26px; letter-spacing: 0.08em;
+  }
+  .logo span { color: var(--terra); }
+
+  /* Hero */
+  .hero { position: relative; overflow: hidden; padding: 56px 0 72px; text-align: center; }
+  .hero::before {
+    content: ""; position: absolute; inset: -200px -200px auto auto; width: 560px; height: 560px;
+    background: radial-gradient(circle, rgba(176,102,98,0.28) 0%, rgba(176,102,98,0) 70%);
+    pointer-events: none;
+  }
+  .hero h1 { font-size: clamp(40px, 7vw, 72px); margin: 14px auto 18px; max-width: 900px; }
+  .hero .sub { color: var(--muted); font-size: 19px; max-width: 640px; margin: 0 auto 32px; }
+  .video {
+    position: relative; max-width: 860px; margin: 0 auto 32px; aspect-ratio: 16 / 9;
+    border-radius: 14px; overflow: hidden; background: var(--bg-2);
+    border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video .ph {
+    position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted);
+    background: linear-gradient(135deg, #262c42, #1a1e2e);
+  }
+  .play {
+    width: 84px; height: 84px; border-radius: 50%; background: var(--terra); margin: 0 auto 14px;
+    display: grid; place-items: center;
+  }
+  .play::after { content: ""; border-left: 26px solid var(--light); border-top: 16px solid transparent; border-bottom: 16px solid transparent; margin-left: 6px; }
+
+  .btn {
+    display: inline-block; text-decoration: none; background: var(--terra); color: var(--light);
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.04em; font-size: 22px; padding: 18px 34px; border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(176,102,98,0.35); transition: transform .15s, background .15s;
+  }
+  .btn:hover { background: #c0716c; transform: translateY(-2px); }
+  .micro { color: var(--muted); font-size: 14px; margin-top: 12px; }
+
+  section { padding: 72px 0; }
+  .alt { background: var(--bg-2); }
+  h2.display { font-size: clamp(32px, 5vw, 48px); margin-bottom: 28px; }
+  .center { text-align: center; }
+
+  /* Herken je dit */
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .checks li {
+    position: relative; padding: 16px 18px 16px 54px; background: rgba(247,247,250,0.04);
+    border: 1px solid var(--line); border-radius: 10px;
+  }
+  .checks li::before {
+    content: "✕"; position: absolute; left: 18px; top: 15px; width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(176,102,98,0.2); color: var(--terra-light); font-size: 13px; display: grid; place-items: center; font-weight: 700;
+  }
+
+  /* Stappen */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { padding: 28px 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }
+  .step .num { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 56px; color: var(--terra); line-height: 1; }
+  .step h3 { font-family: "Barlow Condensed", sans-serif; text-transform: uppercase; font-size: 26px; margin: 8px 0 8px; }
+  .step p { margin: 0; color: var(--muted); }
+
+  /* Resultaten */
+  .results { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .result { border-radius: 14px; overflow: hidden; background: var(--bg-2); border: 1px solid var(--line); }
+  .result .photo { aspect-ratio: 4 / 5; background: linear-gradient(160deg, #2a3048, #1a1e2e); position: relative; }
+  .result .photo img { width: 100%; height: 100%; object-fit: cover; }
+  .result .photo .tag {
+    position: absolute; left: 12px; bottom: 12px; background: var(--terra); padding: 4px 10px; border-radius: 6px;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 24px;
+  }
+  .result .body { padding: 14px 16px 18px; }
+  .result .name { font-family: "Barlow Condensed", sans-serif; font-weight: 700; text-transform: uppercase; font-size: 20px; }
+  .result .body p { margin: 4px 0 0; font-size: 15px; color: var(--muted); }
+
+  /* Over mij */
+  .about { display: grid; grid-template-columns: 340px 1fr; gap: 40px; align-items: center; }
+  .about .photo { aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, #2a3048, #1a1e2e); }
+  .about .photo img { width: 100%; height: 100%; object-fit: cover; }
+  .about blockquote { margin: 0; font-size: 20px; }
+  .about .sig { margin-top: 16px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; text-transform: uppercase; color: var(--terra-light); letter-spacing: 0.08em; }
+
+  /* FAQ */
+  details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+  summary { cursor: pointer; font-weight: 700; font-size: 18px; list-style: none; position: relative; padding-right: 32px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; position: absolute; right: 0; top: -4px; font-size: 26px; color: var(--terra); }
+  details[open] summary::after { content: "–"; }
+  details p { color: var(--muted); margin: 10px 0 0; }
+
+  /* Aanvraag */
+  #aanvraag .box { background: var(--light); color: #1a1e2e; border-radius: 16px; padding: 28px; min-height: 420px; }
+  #aanvraag .ph { border: 2px dashed #c9cbd6; border-radius: 12px; padding: 40px 20px; text-align: center; color: #495471; }
+
+  footer { padding: 32px 0 48px; color: var(--mid-light); font-size: 13px; text-align: center; border-top: 1px solid var(--line); }
+
+  @media (max-width: 860px) {
+    .steps { grid-template-columns: 1fr; }
+    .results { grid-template-columns: repeat(2, 1fr); }
+    .about { grid-template-columns: 1fr; }
+    .about .photo { max-width: 340px; }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 16px; }
+    .hero { padding: 36px 0 52px; }
+    .btn { width: 100%; font-size: 20px; padding: 16px 20px; }
+    .results { grid-template-columns: 1fr 1fr; gap: 10px; }
+    section { padding: 52px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap"><div class="logo">ELITE <span>FIT</span></div></div>
+</header>
+
+<!-- HERO + VSL -->
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Voor drukke mensen van 30 tot 55 die klaar zijn met opnieuw beginnen</span>
+    <h1 class="display">Binnen 6 maanden <span class="accent">fitter, strakker en sterker</span>, zonder crashdieet en zonder terugval</h1>
+    <p class="sub">Bekijk de video (7 minuten) en ontdek waarom het tot nu toe niet bleef hangen, en wat mijn klanten anders doen.</p>
+
+    <div class="video" id="vsl">
+      <!-- VERVANG: haal de .ph-div weg en zet je embed hier, bijv.
+      <iframe src="https://player.vimeo.com/video/XXXXXXX?title=0&byline=0&portrait=0" allow="autoplay; fullscreen" allowfullscreen></iframe> -->
+      <div class="ph">
+        <div>
+          <div class="play"></div>
+          <div>Hier komt je VSL</div>
+        </div>
+      </div>
+    </div>
+
+    <a class="btn" href="#aanvraag">Ja, ik wil een gratis strategiegesprek →</a>
+    <p class="micro">Gratis en vrijblijvend · 30–45 minuten via Google Meet · Beperkt aantal plekken per maand</p>
+  </div>
+</div>
+
+<!-- HERKEN JE DIT -->
+<section class="alt">
+  <div class="wrap narrow">
+    <h2 class="display center">Herken je <span class="accent">dit?</span></h2>
+    <ul class="checks">
+      <li>Je weet wat gezond is, maar na een paar weken val je terug in oude patronen.</li>
+      <li>Doordeweeks lukt het, in het weekend gaat het mis.</li>
+      <li>Je werk, gezin of diensten maken elk schema van internet onhaalbaar.</li>
+      <li>Je hebt al een coach of app geprobeerd, maar dat voelde onpersoonlijk.</li>
+      <li>Je wilt niet alleen afvallen, je wilt je sterk en goed voelen in je lichaam.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- AANPAK -->
+<section>
+  <div class="wrap">
+    <div class="center"><span class="eyebrow">De Improvement Accelerator</span></div>
+    <h2 class="display center">Zo werken we <span class="accent">samen</span></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Plan op maat</h3>
+        <p>Voeding met gewone maaltijden en een trainingsschema dat past in de tijd die je echt hebt.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Elke week bijsturen</h3>
+        <p>Check-in in de app en een 1-op-1 gesprek met mij, zodat we bijsturen voordat het misgaat.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Zelfstandig verder</h3>
+        <p>Na 6 maanden weet je precies hoe je je resultaat houdt. Je krijgt je eigen plan en gids mee.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTATEN -->
+<section class="alt">
+  <div class="wrap">
+    <h2 class="display center">Resultaten van <span class="accent">klanten</span></h2>
+    <div class="results">
+      <!-- VERVANG: foto's in ./img/ (vraag eerst toestemming aan elke klant) -->
+      <div class="result">
+        <div class="photo"><img src="img/frits.jpg" alt="" onerror="this.remove()"><span class="tag">−23 KG</span></div>
+        <div class="body"><div class="name">Frits</div><p>Ging door met een aangepast schema toen hij een knieblessure kreeg.</p></div>
+      </div>
+      <div class="result">
+        <div class="photo"><img src="img/mart.jpg" alt="" onerror="this.remove()"><span class="tag">95 → 82</span></div>
+        <div class="body"><div class="name">Mart</div><p>Zonder zijn sociale leven op te geven.</p></div>
+      </div>
+      <div class="result">
+        <div class="photo"><img src="img/jarne.jpg" alt="" onerror="this.remove()"><span class="tag">−11 KG</span></div>
+        <div class="body"><div class="name">Jarne</div><p>In 13 weken, ondanks werkdagen tot 1 uur 's nachts.</p></div>
+      </div>
+      <div class="result">
+        <div class="photo"><img src="img/klant.jpg" alt="" onerror="this.remove()"><span class="tag">−10 KG</span></div>
+        <div class="body"><div class="name">Klant</div><p>Ischias- en nekpijn verdwenen door krachttraining.</p></div>
+      </div>
+    </div>
+    <div class="center" style="margin-top:40px">
+      <a class="btn" href="#aanvraag">Plan mijn strategiegesprek →</a>
+    </div>
+  </div>
+</section>
+
+<!-- OVER MIJ -->
+<section>
+  <div class="wrap">
+    <div class="about">
+      <div class="photo"><img src="img/sven.jpg" alt="Sven, oprichter van Elite Fit" onerror="this.remove()"></div>
+      <div>
+        <span class="eyebrow">Over mij</span>
+        <h2 class="display" style="margin:8px 0 20px">Ik begeleid <span class="accent">iedereen zelf</span></h2>
+        <blockquote>"Ik ben Sven, oprichter van Elite Fit. Ik begeleid elke klant zelf, daarom neem ik maar een beperkt aantal mensen per maand aan. Mijn aanpak is simpel: geen extremen, wel consistentie, en elke week bijsturen op basis van jouw data."</blockquote>
+        <div class="sig">Sven, Elite Fit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="alt">
+  <div class="wrap narrow">
+    <h2 class="display center">Veelgestelde <span class="accent">vragen</span></h2>
+    <details>
+      <summary>Wat gebeurt er in het gesprek?</summary>
+      <p>We bespreken waar je nu staat, wat je wilt bereiken en wat je tegenhoudt. Je krijgt een concreet advies, ook als we niet samen verder gaan.</p>
+    </details>
+    <details>
+      <summary>Moet ik al in de gym trainen?</summary>
+      <p>Nee. Een gym is wel aan te raden, maar we starten waar jij staat.</p>
+    </details>
+    <details>
+      <summary>Wat kost coaching?</summary>
+      <p>Dat bespreken we in het gesprek, afhankelijk van wat je nodig hebt. Het is een investering, dus plan alleen een gesprek als je daar serieus over na wilt denken.</p>
+    </details>
+    <details>
+      <summary>Ik heb een blessure, kan dat?</summary>
+      <p>Ja. Meerdere klanten zijn gestart met knie-, rug- of nekklachten. We passen het plan aan, in overleg met je fysio.</p>
+    </details>
+  </div>
+</section>
+
+<!-- AANVRAAG -->
+<section id="aanvraag">
+  <div class="wrap narrow">
+    <div class="center">
+      <span class="eyebrow">Stap 1 van 2</span>
+      <h2 class="display" style="margin-top:8px">Vraag je <span class="accent">strategiegesprek</span> aan</h2>
+      <p style="color:var(--muted);margin:-10px 0 28px">Beantwoord 7 korte vragen zodat ik me goed kan voorbereiden. Het duurt 2 minuten.</p>
+    </div>
+    <div class="box">
+      <!-- VERVANG: plak hier de embedcode van je GHL-survey, bijv.
+      <iframe src="https://api.leadconnectorhq.com/widget/survey/XXXXXXXX" style="border:none;width:100%;" scrolling="no" id="XXXXXXXX" title="survey"></iframe>
+      <script src="https://link.msgsndr.com/js/form_embed.js"></script> -->
+      <div class="ph">
+        <strong>Hier komt het GHL-aanvraagformulier</strong><br>
+        Na het invullen gaan gekwalificeerde aanvragen automatisch door naar de kalender.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© Elite Fit · Deze site is geen onderdeel van Meta of Facebook.</div>
+</footer>
+
+</body>
+</html>
