@@ -380,3 +380,39 @@ export async function getGrowthDashboardData() {
     ),
   };
 }
+
+/* ---------- Contentideeën ---------- */
+
+export type ContentIdeaStatus =
+  | "goedgekeurd"
+  | "uitwerken"
+  | "gepland"
+  | "gepubliceerd"
+  | "afgekeurd";
+
+export type ContentIdea = {
+  id: string;
+  title: string;
+  topic: string;
+  funnel_stage: "tof" | "mof" | "bof";
+  format: string;
+  status: ContentIdeaStatus;
+  hook: string | null;
+  notes: string | null;
+  source_ref: string | null;
+  approved_at: string;
+  selected_at: string | null;
+};
+
+export async function getContentIdeas() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("content_ideas")
+    .select(
+      "id, title, topic, funnel_stage, format, status, hook, notes, source_ref, approved_at, selected_at",
+    )
+    .order("selected_at", { ascending: false, nullsFirst: false })
+    .order("approved_at", { ascending: false });
+
+  return (data ?? []) as ContentIdea[];
+}

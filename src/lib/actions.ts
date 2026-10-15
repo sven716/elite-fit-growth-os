@@ -14,6 +14,7 @@ function refreshAll() {
   revalidatePath("/meer");
   revalidatePath("/meer/gainz-legenda");
   revalidatePath("/meer/gainz-reviewflow");
+  revalidatePath("/ideeen");
 }
 
 /* ---------- Taken ---------- */
@@ -45,6 +46,57 @@ export async function createTask(formData: FormData) {
     due_date: dueDate || null,
     category: category === "opvolgen" ? "opvolgen" : "todo",
   });
+  refreshAll();
+}
+
+/* ---------- Contentideeën ---------- */
+
+export async function createContentIdea(formData: FormData) {
+  const supabase = await createClient();
+  const title = String(formData.get("title") ?? "").trim();
+  const topic = String(formData.get("topic") ?? "")
+    .trim()
+    .toLocaleLowerCase("nl-NL");
+  const format = String(formData.get("format") ?? "")
+    .trim()
+    .toLocaleLowerCase("nl-NL");
+  const funnelStage = String(formData.get("funnel_stage") ?? "tof");
+  if (!title || !topic || !format) return;
+
+  await supabase.from("content_ideas").insert({
+    title,
+    topic,
+    format,
+    funnel_stage: ["tof", "mof", "bof"].includes(funnelStage)
+      ? funnelStage
+      : "tof",
+    hook: String(formData.get("hook") ?? "").trim() || null,
+    notes: String(formData.get("notes") ?? "").trim() || null,
+    status: "goedgekeurd",
+  });
+  refreshAll();
+}
+
+export async function setContentIdeaStatus(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "");
+  const allowed = [
+    "goedgekeurd",
+    "uitwerken",
+    "gepland",
+    "gepubliceerd",
+    "afgekeurd",
+  ];
+  if (!id || !allowed.includes(status)) return;
+
+  await supabase
+    .from("content_ideas")
+    .update({
+      status,
+      selected_at: status === "uitwerken" ? new Date().toISOString() : null,
+    })
+    .eq("id", id);
   refreshAll();
 }
 

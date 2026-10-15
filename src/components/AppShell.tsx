@@ -8,6 +8,7 @@ const ALL_NAV = [
   { href: "/", label: "Cockpit" },
   { href: "/doelen", label: "Doelen" },
   { href: "/groei", label: "Groei" },
+  { href: "/ideeen", label: "Ideeënbank" },
   { href: "/sales", label: "Sales" },
   { href: "/financien", label: "Financiën" },
   { href: "/operations", label: "Operations" },
@@ -32,6 +33,7 @@ const PRIMARY_NAV = [
 const UNDER_MORE = [
   "/meer",
   "/groei",
+  "/ideeen",
   "/sales",
   "/financien",
   "/operations",

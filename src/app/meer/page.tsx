@@ -8,6 +8,11 @@ const LINKS = [
     hint: "Instagram-prestaties en GHL-funnel per post",
   },
   {
+    href: "/ideeen",
+    label: "Ideeënbank",
+    hint: "Filter goedgekeurde contentideeën en kies wat je uitwerkt",
+  },
+  {
     href: "/sales",
     label: "Sales",
     hint: "Leads, gesprekken, conversie en datakwaliteit",
