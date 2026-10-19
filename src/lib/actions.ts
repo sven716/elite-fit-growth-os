@@ -15,6 +15,7 @@ function refreshAll() {
   revalidatePath("/meer/gainz-legenda");
   revalidatePath("/meer/gainz-reviewflow");
   revalidatePath("/ideeen");
+  revalidatePath("/goedkeuringen");
 }
 
 /* ---------- Taken ---------- */
@@ -289,6 +290,50 @@ export async function createApprovedContentAsset(formData: FormData) {
   });
 
   refreshAll();
+}
+
+/* ---------- Goedkeuringen ---------- */
+
+type ApprovalDecision = "goedgekeurd" | "aanpassen" | "gestopt";
+
+async function decideContentAsset(
+  formData: FormData,
+  status: ApprovalDecision,
+) {
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) return;
+
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) return;
+
+  const decidedAt = new Date().toISOString();
+  const decisionReason = String(formData.get("decision_reason") ?? "").trim();
+  const { error } = await supabase
+    .from("content_assets")
+    .update({
+      status,
+      decision_reason: decisionReason || null,
+      decided_at: decidedAt,
+      approved_at: status === "goedgekeurd" ? decidedAt : null,
+    })
+    .eq("id", id)
+    .eq("user_id", user.user.id);
+
+  if (error) throw new Error(`Besluit opslaan mislukt: ${error.message}`);
+  revalidatePath("/goedkeuringen");
+}
+
+export async function approveContentAsset(formData: FormData) {
+  await decideContentAsset(formData, "goedgekeurd");
+}
+
+export async function requestContentAssetChanges(formData: FormData) {
+  await decideContentAsset(formData, "aanpassen");
+}
+
+export async function stopContentAsset(formData: FormData) {
+  await decideContentAsset(formData, "gestopt");
 }
 
 /* ---------- Aanpassen & verwijderen ---------- */

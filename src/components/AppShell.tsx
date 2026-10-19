@@ -14,6 +14,7 @@ const ALL_NAV = [
   { href: "/operations", label: "Operations" },
   { href: "/planning", label: "Planning" },
   { href: "/taken", label: "Taken" },
+  { href: "/goedkeuringen", label: "Goedkeuringen" },
   { href: "/klanten", label: "Klanten" },
   { href: "/winnaarsformule", label: "Formule" },
   { href: "/kosten", label: "Kosten" },
@@ -26,6 +27,7 @@ const PRIMARY_NAV = [
   { href: "/doelen", label: "Doelen" },
   { href: "/planning", label: "Planning" },
   { href: "/taken", label: "Taken" },
+  { href: "/goedkeuringen", label: "Akkoord" },
   { href: "/meer", label: "Meer" },
 ] as const;
 
