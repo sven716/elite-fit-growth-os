@@ -32,6 +32,15 @@ export async function toggleTask(id: string, done: boolean) {
   refreshAll();
 }
 
+export async function setTaskPriority(id: string, priority: "normaal" | "hoog") {
+  const supabase = await createClient();
+  await supabase
+    .from("tasks")
+    .update({ priority: priority === "hoog" ? "hoog" : "normaal" })
+    .eq("id", id);
+  refreshAll();
+}
+
 export async function createTask(formData: FormData) {
   const supabase = await createClient();
   const title = String(formData.get("title") ?? "").trim();
@@ -40,12 +49,14 @@ export async function createTask(formData: FormData) {
   const projectId = String(formData.get("project_id") ?? "");
   const dueDate = String(formData.get("due_date") ?? "");
   const category = String(formData.get("category") ?? "todo");
+  const priority = String(formData.get("priority") ?? "normaal");
 
   await supabase.from("tasks").insert({
     title,
     project_id: projectId || null,
     due_date: dueDate || null,
     category: category === "opvolgen" ? "opvolgen" : "todo",
+    priority: priority === "hoog" ? "hoog" : "normaal",
   });
   refreshAll();
 }

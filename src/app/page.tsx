@@ -27,6 +27,42 @@ export default async function CockpitPage() {
 
       <CoachCard note={data.coachNote} />
 
+      <section className="ef-card border-terra/25 p-5">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-[11px] font-bold tracking-[0.18em] text-terra uppercase">
+            Prioriteiten
+          </h2>
+          <a href="/taken" className="text-xs font-bold text-terra">
+            Beheren
+          </a>
+        </div>
+
+        {data.priorityTasks.length > 0 ? (
+          <div>
+            {data.priorityTasks.map((task) => (
+              <CheckRow
+                key={task.id}
+                title={task.title}
+                done={false}
+                meta={
+                  task.due_date
+                    ? `prio · ${formatShortDate(task.due_date)}`
+                    : "prio"
+                }
+                onToggle={async (done) => {
+                  "use server";
+                  await toggleTask(task.id, done);
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="px-2 py-2 text-sm text-light/45">
+            Geen openstaande prioriteiten.
+          </p>
+        )}
+      </section>
+
       <section className="grid gap-4 sm:grid-cols-2">
         <MetricCard
           label="Omzet deze maand"
