@@ -45,6 +45,33 @@ export type CoachNote = {
   advice: string | null;
 };
 
+export const APPROVAL_STATUSES = [
+  "wacht_op_goedkeuring",
+  "goedgekeurd",
+  "aanpassen",
+  "gestopt",
+  "geblokkeerd",
+] as const;
+
+export type ApprovalStatus = (typeof APPROVAL_STATUSES)[number];
+
+export type ContentApproval = {
+  id: string;
+  title: string;
+  asset_type: string;
+  status: ApprovalStatus;
+  source_ref: string | null;
+  scheduled_for: string | null;
+  channel: string | null;
+  decision_reason: string | null;
+  blockers: string[];
+  decided_at: string | null;
+  preview_path: string | null;
+  external_url: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
 /** Alles wat de Cockpit nodig heeft, in één keer opgehaald. */
 export async function getCockpitData() {
   const supabase = await createClient();
@@ -296,6 +323,31 @@ export async function getTasksGrouped() {
     projects,
     projectName,
   };
+}
+
+/* ---------- Goedkeuringen ---------- */
+
+export async function getContentApprovals() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("content_assets")
+    .select(
+      "id, title, asset_type, status, source_ref, scheduled_for, channel, decision_reason, blockers, decided_at, preview_path, external_url, notes, created_at",
+    )
+    .order("scheduled_for", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(`Goedkeuringen ophalen mislukt: ${error.message}`);
+
+  const approvals = (data ?? []) as ContentApproval[];
+  const counts = Object.fromEntries(
+    APPROVAL_STATUSES.map((status) => [
+      status,
+      approvals.filter((approval) => approval.status === status).length,
+    ]),
+  ) as Record<ApprovalStatus, number>;
+
+  return { approvals, counts };
 }
 
 /* ---------- Winnaarsformule ---------- */

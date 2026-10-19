@@ -3,6 +3,11 @@ import { SectionHeading } from "@/components/SectionHeading";
 
 const LINKS = [
   {
+    href: "/goedkeuringen",
+    label: "Goedkeuringen",
+    hint: "Content beoordelen, aanpassen of stoppen",
+  },
+  {
     href: "/groei",
     label: "Groei",
     hint: "Instagram-prestaties en GHL-funnel per post",
