@@ -27,6 +27,7 @@ export type Task = {
   status: "open" | "klaar" | "gearchiveerd";
   due_date: string | null;
   category: "todo" | "opvolgen";
+  priority: "normaal" | "hoog";
   source: "handmatig" | "plaud" | "fathom" | "ghl";
   project_id: string | null;
 };
@@ -106,9 +107,12 @@ export async function getCockpitData() {
       .in("period", [month, year]),
     supabase
       .from("tasks")
-      .select("id, title, status, due_date, category, source, project_id")
+      .select(
+        "id, title, status, due_date, category, priority, source, project_id",
+      )
       .eq("status", "open")
-      .lte("due_date", day)
+      .or(`priority.eq.hoog,due_date.lte.${day}`)
+      .order("priority", { ascending: true })
       .order("due_date"),
     supabase
       .from("daily_actions")
@@ -169,7 +173,12 @@ export async function getCockpitData() {
       month: (clientsRes.data ?? []).length,
       monthGoal: goalFor("klanten", "maand"),
     },
-    todayTasks: (tasksRes.data ?? []) as Task[],
+    priorityTasks: ((tasksRes.data ?? []) as Task[]).filter(
+      (task) => task.priority === "hoog",
+    ),
+    todayTasks: ((tasksRes.data ?? []) as Task[]).filter(
+      (task) => task.due_date !== null && task.due_date <= day,
+    ),
     dailyActions: (actionsRes.data ?? []).map((a) => ({
       ...a,
       done: checkedIds.has(a.id),
@@ -268,7 +277,9 @@ export async function getProject(id: string) {
       .order("name"),
     supabase
       .from("tasks")
-      .select("id, title, status, due_date, category, source, project_id")
+      .select(
+        "id, title, status, due_date, category, priority, source, project_id",
+      )
       .eq("project_id", id)
       .order("status")
       .order("due_date", { nullsFirst: false }),
@@ -298,8 +309,11 @@ export async function getTasksGrouped() {
   const [tasksRes, projectsRes] = await Promise.all([
     supabase
       .from("tasks")
-      .select("id, title, status, due_date, category, source, project_id")
+      .select(
+        "id, title, status, due_date, category, priority, source, project_id",
+      )
       .order("status")
+      .order("priority", { ascending: true })
       .order("due_date", { nullsFirst: false }),
     supabase.from("projects").select("id, name").order("name"),
   ]);
@@ -309,13 +323,16 @@ export async function getTasksGrouped() {
   const projectName = new Map(projects.map((p) => [p.id, p.name]));
 
   const open = tasks.filter((t) => t.status === "open");
+  const priority = open.filter((t) => t.priority === "hoog");
+  const regular = open.filter((t) => t.priority !== "hoog");
 
   return {
-    vandaag: open.filter(
+    priority,
+    vandaag: regular.filter(
       (t) => t.category === "todo" && t.due_date !== null && t.due_date <= day,
     ),
-    opvolgen: open.filter((t) => t.category === "opvolgen"),
-    overig: open.filter(
+    opvolgen: regular.filter((t) => t.category === "opvolgen"),
+    overig: regular.filter(
       (t) =>
         t.category === "todo" && (t.due_date === null || t.due_date > day),
     ),

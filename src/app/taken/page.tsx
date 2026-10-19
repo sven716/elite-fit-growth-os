@@ -2,7 +2,12 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { CheckRow } from "@/components/CheckRow";
 import { DeleteButton } from "@/components/DeleteButton";
 import { getTasksGrouped, type Task } from "@/lib/queries";
-import { createTask, toggleTask, deleteTask } from "@/lib/actions";
+import {
+  createTask,
+  toggleTask,
+  deleteTask,
+  setTaskPriority,
+} from "@/lib/actions";
 
 function TaskGroup({
   title,
@@ -42,6 +47,31 @@ function TaskGroup({
                   }}
                 />
               </div>
+              <form
+                action={async () => {
+                  "use server";
+                  await setTaskPriority(
+                    task.id,
+                    task.priority === "hoog" ? "normaal" : "hoog",
+                  );
+                }}
+              >
+                <button
+                  type="submit"
+                  aria-label={
+                    task.priority === "hoog"
+                      ? "Prioriteit verwijderen"
+                      : "Als prioriteit markeren"
+                  }
+                  className={`rounded-md border px-2 py-1 text-[10px] font-bold uppercase transition-colors ${
+                    task.priority === "hoog"
+                      ? "border-terra/50 bg-terra/10 text-terra"
+                      : "border-light/10 text-light/30 hover:border-terra/30 hover:text-terra"
+                  }`}
+                >
+                  Prio
+                </button>
+              </form>
               <DeleteButton
                 label="×"
                 onDelete={async () => {
@@ -60,7 +90,7 @@ function TaskGroup({
 }
 
 export default async function TakenPage() {
-  const { vandaag, opvolgen, overig, klaar, projects, projectName } =
+  const { priority, vandaag, opvolgen, overig, klaar, projects, projectName } =
     await getTasksGrouped();
 
   return (
@@ -68,6 +98,13 @@ export default async function TakenPage() {
       <SectionHeading eyebrow="Executie" accent="OVERZICHT">
         Eén
       </SectionHeading>
+
+      <TaskGroup
+        title="Prioriteit"
+        tasks={priority}
+        projectName={projectName}
+        empty="Geen openstaande prioriteiten."
+      />
 
       <TaskGroup
         title="Vandaag"
@@ -119,6 +156,13 @@ export default async function TakenPage() {
           >
             <option value="todo">Te doen</option>
             <option value="opvolgen">Op te volgen</option>
+          </select>
+          <select
+            name="priority"
+            className="rounded-lg border border-light/12 bg-light/5 px-3 py-2 text-sm text-light outline-none focus:border-terra/60"
+          >
+            <option value="normaal">Normale prioriteit</option>
+            <option value="hoog">Hoge prioriteit</option>
           </select>
           <input
             name="due_date"
