@@ -34,9 +34,6 @@ const UNDER_MORE = [
   "/financien",
   "/klanten",
   "/doelen",
-  "/groei",
-  "/ideeen",
-  "/goedkeuringen",
   "/winnaarsformule",
   "/kosten",
   "/account",
@@ -45,6 +42,22 @@ const UNDER_MORE = [
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   if (href === "/meer") return UNDER_MORE.some((p) => pathname.startsWith(p));
+  if (href === "/content")
+    return ["/content", "/ideeen", "/goedkeuringen", "/groei"].some(
+      (path) => pathname === path || pathname.startsWith(`${path}/`),
+    );
+  if (href === "/coaching")
+    return ["/coaching", "/klanten", "/meer/gainz-"].some((path) =>
+      pathname.startsWith(path),
+    );
+  if (href === "/operations")
+    return ["/operations", "/planning"].some((path) =>
+      pathname.startsWith(path),
+    );
+  if (href === "/administratie")
+    return ["/administratie", "/financien", "/kosten"].some((path) =>
+      pathname.startsWith(path),
+    );
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -76,11 +89,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <nav className="flex flex-col gap-1">
               {ALL_NAV.map((item) => {
-                const active =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname === item.href ||
-                      pathname.startsWith(`${item.href}/`);
+                const active = isActive(pathname, item.href);
                 return (
                   <Link
                     key={item.href}
