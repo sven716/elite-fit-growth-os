@@ -3,43 +3,40 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-/** Alle schermen — zichtbaar in de zijbalk op desktop. */
+/** Dagelijkse besturing — detailpagina's zijn bereikbaar vanuit hun werkgebied. */
 const ALL_NAV = [
-  { href: "/", label: "Cockpit" },
-  { href: "/doelen", label: "Doelen" },
-  { href: "/groei", label: "Groei" },
-  { href: "/ideeen", label: "Ideeënbank" },
-  { href: "/sales", label: "Sales" },
-  { href: "/financien", label: "Financiën" },
-  { href: "/operations", label: "Operations" },
-  { href: "/planning", label: "Planning" },
+  { href: "/", label: "Vandaag" },
   { href: "/taken", label: "Taken" },
-  { href: "/goedkeuringen", label: "Goedkeuringen" },
-  { href: "/klanten", label: "Klanten" },
-  { href: "/winnaarsformule", label: "Formule" },
-  { href: "/kosten", label: "Kosten" },
+  { href: "/content", label: "Content" },
+  { href: "/sales", label: "Sales" },
+  { href: "/coaching", label: "Coaching" },
+  { href: "/operations", label: "Operations" },
+  { href: "/administratie", label: "Administratie" },
+  { href: "/doelen", label: "Doelen" },
   { href: "/account", label: "Account" },
 ] as const;
 
 /** Vijf hoofdknoppen voor de onderbalk op mobiel. */
 const PRIMARY_NAV = [
-  { href: "/", label: "Cockpit" },
-  { href: "/doelen", label: "Doelen" },
-  { href: "/planning", label: "Planning" },
+  { href: "/", label: "Vandaag" },
   { href: "/taken", label: "Taken" },
-  { href: "/goedkeuringen", label: "Akkoord" },
+  { href: "/content", label: "Content" },
+  { href: "/sales", label: "Sales" },
   { href: "/meer", label: "Meer" },
 ] as const;
 
 /** Schermen die onder "Meer" vallen — bepaalt of die knop actief oogt. */
 const UNDER_MORE = [
   "/meer",
+  "/coaching",
+  "/operations",
+  "/administratie",
+  "/financien",
+  "/klanten",
+  "/doelen",
   "/groei",
   "/ideeen",
-  "/sales",
-  "/financien",
-  "/operations",
-  "/klanten",
+  "/goedkeuringen",
   "/winnaarsformule",
   "/kosten",
   "/account",

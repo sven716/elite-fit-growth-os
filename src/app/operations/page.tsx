@@ -61,7 +61,7 @@ export default async function OperationsPage() {
       <section>
         <h2 className="mb-3 text-[11px] font-bold tracking-[0.18em] text-light/40 uppercase">Werkvoorraad</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Card label="Open taken" value={data.taskDebt.open} />
+          <Card label="Open operationstaken" value={data.taskDebt.open} />
           <Card label="Te laat" value={data.taskDebt.overdue} />
           <Card label="Zonder deadline" value={data.taskDebt.withoutDate} />
           <Card label="Actieve klanten" value={data.clients.active} hint={`${data.clients.startedThisMonth} gestart deze maand`} />

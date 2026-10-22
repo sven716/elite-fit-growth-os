@@ -1,6 +1,8 @@
 import { SectionHeading } from "@/components/SectionHeading";
+import Link from "next/link";
 import { formatMetric } from "@/lib/growth-dashboard";
 import { getSalesDashboardData } from "@/lib/platform-queries";
+import { getTasksGrouped } from "@/lib/queries";
 
 function Card({ label, value, hint, accent = false }: { label: string; value: number | null; hint?: string; accent?: boolean }) {
   return (
@@ -17,14 +19,40 @@ function percentage(part: number, total: number) {
 }
 
 export default async function SalesPage() {
-  const result = await getSalesDashboardData();
+  const [result, tasks] = await Promise.all([
+    getSalesDashboardData(),
+    getTasksGrouped(),
+  ]);
   const data = result.data;
+  const openTasks = [
+    ...tasks.overdue,
+    ...tasks.vandaag,
+    ...tasks.komendeWeek,
+    ...tasks.later,
+    ...tasks.zonderDatum,
+  ];
+  const salesTasks = openTasks.filter((task) => task.area === "sales");
 
   return (
     <div className="space-y-8">
       <SectionHeading eyebrow="GHL" accent="funnel">Sales</SectionHeading>
 
       {result.error ? <div className="rounded-2xl border border-terra/30 bg-terra/10 p-4 text-sm text-light/65">{result.error}</div> : null}
+
+      <section className="ef-card flex items-start justify-between gap-4 p-5">
+        <div>
+          <p className="font-black text-light">Salesacties</p>
+          <p className="mt-1 text-sm text-light/40">
+            Opvolging blijft gekoppeld aan GHL; uitvoerbaar werk staat één keer bij Taken.
+          </p>
+          <Link href="/taken" className="mt-3 inline-block text-xs font-bold text-terra">
+            Acties bekijken
+          </Link>
+        </div>
+        <span className="rounded-full bg-light/5 px-3 py-1.5 text-sm font-black text-light">
+          {salesTasks.length}
+        </span>
+      </section>
 
       {data ? (
         <>
