@@ -175,7 +175,11 @@ export async function getOperationsDashboardData() {
       .from("integration_sync_status")
       .select("id,source,status,last_started_at,last_completed_at,record_count,message")
       .order("source"),
-    supabase.from("tasks").select("id,due_date").eq("status", "open"),
+    supabase
+      .from("tasks")
+      .select("id,due_date")
+      .eq("status", "open")
+      .eq("area", "operations"),
     supabase.from("clients").select("id,start_date,status"),
   ]);
   const openTasks = tasksResult.data ?? [];

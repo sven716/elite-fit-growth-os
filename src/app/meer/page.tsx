@@ -3,59 +3,29 @@ import { SectionHeading } from "@/components/SectionHeading";
 
 const LINKS = [
   {
-    href: "/goedkeuringen",
-    label: "Goedkeuringen",
-    hint: "Content beoordelen, aanpassen of stoppen",
-  },
-  {
-    href: "/groei",
-    label: "Groei",
-    hint: "Instagram-prestaties en GHL-funnel per post",
-  },
-  {
-    href: "/ideeen",
-    label: "Ideeënbank",
-    hint: "Filter goedgekeurde contentideeën en kies wat je uitwerkt",
-  },
-  {
-    href: "/sales",
-    label: "Sales",
-    hint: "Leads, gesprekken, conversie en datakwaliteit",
-  },
-  {
-    href: "/financien",
-    label: "Financiën",
-    hint: "Omzet, kosten, marge en openstaande facturen",
+    href: "/coaching",
+    label: "Coaching",
+    hint: "Klanten, reviews en concrete vervolgacties",
   },
   {
     href: "/operations",
     label: "Operations",
-    hint: "Koppelingen, synchronisaties en capaciteit",
+    hint: "Systemen, synchronisaties, capaciteit en interne kwaliteit",
   },
   {
-    href: "/klanten",
-    label: "Klanten",
-    hint: "Nieuwe klanten toevoegen en je klantenbestand",
+    href: "/administratie",
+    label: "Administratie",
+    hint: "Moneybird-overzicht, afwijkingen en financiële acties",
+  },
+  {
+    href: "/doelen",
+    label: "Doelen en rapportage",
+    hint: "Maand- en jaardoelen buiten de dagelijkse actielijst",
   },
   {
     href: "/winnaarsformule",
-    label: "Winnaarsformule",
-    hint: "Je dagelijkse acties en streaks",
-  },
-  {
-    href: "/meer/gainz-legenda",
-    label: "Gainz-legenda",
-    hint: "Coaching-signalen en vaste betekenis per status",
-  },
-  {
-    href: "/meer/gainz-reviewflow",
-    label: "Gainz-reviewflow",
-    hint: "Vaste weekreview met signalen, bottleneck en intern advies",
-  },
-  {
-    href: "/kosten",
-    label: "Kosten",
-    hint: "Uitgaven loggen en bewaken",
+    label: "Dagritme",
+    hint: "Terugkerende persoonlijke routines en streaks",
   },
   {
     href: "/account",
@@ -67,9 +37,14 @@ const LINKS = [
 export default function MeerPage() {
   return (
     <div className="space-y-6">
-      <SectionHeading eyebrow="Meer" accent="OS">
-        Rest van je
-      </SectionHeading>
+      <div>
+        <SectionHeading eyebrow="Overige werkgebieden" accent="MEER">
+          Alles
+        </SectionHeading>
+        <p className="mt-2 text-sm text-light/45">
+          Detailfuncties staan onder het werkgebied waar ze thuishoren.
+        </p>
+      </div>
 
       <div className="space-y-3">
         {LINKS.map((link) => (

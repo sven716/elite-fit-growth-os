@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { today } from "@/lib/dates";
+import { isWorkArea } from "@/lib/work-areas";
 
 function refreshAll() {
   revalidatePath("/");
@@ -16,19 +17,24 @@ function refreshAll() {
   revalidatePath("/meer/gainz-reviewflow");
   revalidatePath("/ideeen");
   revalidatePath("/goedkeuringen");
+  revalidatePath("/content");
+  revalidatePath("/coaching");
+  revalidatePath("/administratie");
+  revalidatePath("/operations");
 }
 
 /* ---------- Taken ---------- */
 
 export async function toggleTask(id: string, done: boolean) {
   const supabase = await createClient();
-  await supabase
+  const { error } = await supabase
     .from("tasks")
     .update({
       status: done ? "klaar" : "open",
       done_at: done ? new Date().toISOString() : null,
     })
     .eq("id", id);
+  if (error) throw new Error(`Taak bijwerken mislukt: ${error.message}`);
   refreshAll();
 }
 
@@ -50,14 +56,18 @@ export async function createTask(formData: FormData) {
   const dueDate = String(formData.get("due_date") ?? "");
   const category = String(formData.get("category") ?? "todo");
   const priority = String(formData.get("priority") ?? "normaal");
+  const areaInput = String(formData.get("area") ?? "centraal");
+  const area = isWorkArea(areaInput) ? areaInput : "centraal";
 
-  await supabase.from("tasks").insert({
+  const { error } = await supabase.from("tasks").insert({
     title,
     project_id: projectId || null,
     due_date: dueDate || null,
     category: category === "opvolgen" ? "opvolgen" : "todo",
     priority: priority === "hoog" ? "hoog" : "normaal",
+    area,
   });
+  if (error) throw new Error(`Taak toevoegen mislukt: ${error.message}`);
   refreshAll();
 }
 
@@ -264,23 +274,10 @@ export async function createApprovedContentAsset(formData: FormData) {
   const notes = String(formData.get("notes") ?? "").trim();
   const approvedAt = new Date().toISOString();
 
-  const { data: task } = await supabase
-    .from("tasks")
-    .insert({
-      title: `Goedgekeurd: ${title}`,
-      project_id: projectId,
-      category: "todo",
-      status: "klaar",
-      done_at: approvedAt,
-      source: "handmatig",
-    })
-    .select("id")
-    .single();
-
   await supabase.from("content_assets").insert({
     user_id: user.user.id,
     project_id: projectId,
-    task_id: task?.id ?? null,
+    task_id: null,
     title,
     asset_type: [
       "reel",

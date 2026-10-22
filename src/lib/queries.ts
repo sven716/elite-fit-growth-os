@@ -5,6 +5,8 @@ import {
   today,
 } from "@/lib/dates";
 import { computeStreak, shiftDays } from "@/lib/streak";
+import { WORK_AREAS, type WorkArea } from "@/lib/work-areas";
+import { groupItemsByTimeline } from "@/lib/task-groups";
 import {
   aggregateInstagramTotals,
   type InstagramMediaPerformance,
@@ -28,6 +30,7 @@ export type Task = {
   due_date: string | null;
   category: "todo" | "opvolgen";
   priority: "normaal" | "hoog";
+  area: WorkArea;
   source: "handmatig" | "plaud" | "fathom" | "ghl";
   project_id: string | null;
 };
@@ -90,6 +93,7 @@ export async function getCockpitData() {
     checkinsRes,
     eventsRes,
     clientsRes,
+    taskProjectsRes,
   ] = await Promise.all([
     supabase.from("activations").select("text, sort").order("sort"),
     supabase
@@ -108,7 +112,7 @@ export async function getCockpitData() {
     supabase
       .from("tasks")
       .select(
-        "id, title, status, due_date, category, priority, source, project_id",
+        "id, title, status, due_date, category, priority, area, source, project_id",
       )
       .eq("status", "open")
       .or(`priority.eq.hoog,due_date.lte.${day}`)
@@ -132,6 +136,7 @@ export async function getCockpitData() {
       .select("id")
       .gte("start_date", `${month}-01`)
       .lte("start_date", day),
+    supabase.from("projects").select("id, name"),
   ]);
 
   const activations = activationsRes.data ?? [];
@@ -157,6 +162,10 @@ export async function getCockpitData() {
 
   const goalFor = (metric: string, type: "jaar" | "maand") =>
     goals.find((g) => g.metric === metric && g.type === type) ?? null;
+  const projectNames = new Map(
+    (taskProjectsRes.data ?? []).map((project) => [project.id, project.name]),
+  );
+  const commandTasks = (tasksRes.data ?? []) as Task[];
 
   return {
     activation,
@@ -173,12 +182,24 @@ export async function getCockpitData() {
       month: (clientsRes.data ?? []).length,
       monthGoal: goalFor("klanten", "maand"),
     },
-    priorityTasks: ((tasksRes.data ?? []) as Task[]).filter(
-      (task) => task.priority === "hoog",
-    ),
-    todayTasks: ((tasksRes.data ?? []) as Task[]).filter(
-      (task) => task.due_date !== null && task.due_date <= day,
-    ),
+    attention: {
+      overdue: commandTasks.filter(
+        (task) => task.due_date !== null && task.due_date < day,
+      ).length,
+      highPriority: commandTasks.filter((task) => task.priority === "hoog")
+        .length,
+    },
+    todayByArea: WORK_AREAS.map((area) => ({
+      area,
+      tasks: commandTasks
+        .filter((task) => task.area === area)
+        .map((task) => ({
+          ...task,
+          projectName: task.project_id
+            ? (projectNames.get(task.project_id) ?? null)
+            : null,
+        })),
+    })).filter((group) => group.tasks.length > 0),
     dailyActions: (actionsRes.data ?? []).map((a) => ({
       ...a,
       done: checkedIds.has(a.id),
@@ -278,7 +299,7 @@ export async function getProject(id: string) {
     supabase
       .from("tasks")
       .select(
-        "id, title, status, due_date, category, priority, source, project_id",
+        "id, title, status, due_date, category, priority, area, source, project_id",
       )
       .eq("project_id", id)
       .order("status")
@@ -310,7 +331,7 @@ export async function getTasksGrouped() {
     supabase
       .from("tasks")
       .select(
-        "id, title, status, due_date, category, priority, source, project_id",
+        "id, title, status, due_date, category, priority, area, source, project_id",
       )
       .order("status")
       .order("priority", { ascending: true })
@@ -323,22 +344,51 @@ export async function getTasksGrouped() {
   const projectName = new Map(projects.map((p) => [p.id, p.name]));
 
   const open = tasks.filter((t) => t.status === "open");
-  const priority = open.filter((t) => t.priority === "hoog");
-  const regular = open.filter((t) => t.priority !== "hoog");
+  const timeline = groupItemsByTimeline(open, day);
 
   return {
-    priority,
-    vandaag: regular.filter(
-      (t) => t.category === "todo" && t.due_date !== null && t.due_date <= day,
-    ),
-    opvolgen: regular.filter((t) => t.category === "opvolgen"),
-    overig: regular.filter(
-      (t) =>
-        t.category === "todo" && (t.due_date === null || t.due_date > day),
-    ),
+    overdue: timeline.overdue,
+    vandaag: timeline.today,
+    komendeWeek: timeline.upcoming,
+    later: timeline.later,
+    zonderDatum: timeline.withoutDate,
     klaar: tasks.filter((t) => t.status === "klaar").slice(0, 10),
     projects,
     projectName,
+  };
+}
+
+/* ---------- Coaching ---------- */
+
+export async function getCoachingOverview() {
+  const supabase = await createClient();
+  const day = today();
+  const [clientsRes, reviewsRes, tasksRes] = await Promise.all([
+    supabase.from("clients").select("id, status"),
+    supabase.from("gainz_reviews").select("id", { count: "exact", head: true }),
+    supabase
+      .from("tasks")
+      .select("id, due_date, priority")
+      .eq("status", "open")
+      .eq("area", "coaching"),
+  ]);
+
+  const clients = clientsRes.data ?? [];
+  const tasks = tasksRes.data ?? [];
+  return {
+    activeClients: clients.filter((client) => client.status === "actief").length,
+    totalClients: clients.length,
+    reviews: reviewsRes.count ?? 0,
+    openActions: tasks.length,
+    dueActions: tasks.filter(
+      (task) => task.due_date !== null && task.due_date <= day,
+    ).length,
+    highPriorityActions: tasks.filter((task) => task.priority === "hoog").length,
+    errors: [
+      clientsRes.error?.message,
+      reviewsRes.error?.message,
+      tasksRes.error?.message,
+    ].filter((value): value is string => Boolean(value)),
   };
 }
 
