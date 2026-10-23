@@ -10,6 +10,18 @@ alter table public.tasks
   add constraint tasks_source_check
   check (source in ('handmatig', 'plaud', 'fathom', 'ghl', 'automation'));
 
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conrelid = 'public.tasks'::regclass
+      and conname = 'tasks_user_source_ref_unique'
+  ) then
+    alter table public.tasks
+      add constraint tasks_user_source_ref_unique unique (user_id, source_ref);
+  end if;
+end $$;
+
 create index if not exists tasks_open_auto_managed_idx
   on public.tasks (user_id, area, due_date)
   where status = 'open' and auto_managed = true;
