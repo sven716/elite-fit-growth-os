@@ -81,6 +81,7 @@ export default async function VandaagPage() {
                   const meta = [
                     overdue ? "te laat" : null,
                     task.priority === "hoog" ? "hoge prio" : null,
+                    task.source === "automation" ? "automatisch" : null,
                     task.projectName,
                   ]
                     .filter(Boolean)

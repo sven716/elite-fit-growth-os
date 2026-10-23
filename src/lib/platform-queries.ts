@@ -75,6 +75,17 @@ export type IntegrationStatus = {
   message: string | null;
 };
 
+export type AutomationRun = {
+  id: string;
+  status: "gestart" | "geslaagd" | "fout";
+  detected_count: number;
+  created_count: number;
+  resolved_count: number;
+  error_message: string | null;
+  started_at: string;
+  completed_at: string | null;
+};
+
 export type SalesSnapshot = {
   id: string;
   snapshot_date: string;
@@ -166,7 +177,7 @@ export async function getOperationsDashboardData() {
   const supabase = await createClient();
   const day = new Date().toISOString().slice(0, 10);
   const monthStart = `${day.slice(0, 7)}-01`;
-  const [snapshotResult, statusesResult, tasksResult, clientsResult] = await Promise.all([
+  const [snapshotResult, statusesResult, tasksResult, clientsResult, automationResult] = await Promise.all([
     latestRow<OperationsSnapshot>(
       "operations_snapshots",
       "id,snapshot_date,period_start,period_end,calendar_events,business_meetings,strategy_calls,coaching_calls,group_calls,focus_blocks,meeting_minutes,upcoming_7d_events,upcoming_7d_meeting_minutes,fathom_meetings,fathom_crm_matches,last_synced_at",
@@ -181,6 +192,13 @@ export async function getOperationsDashboardData() {
       .eq("status", "open")
       .eq("area", "operations"),
     supabase.from("clients").select("id,start_date,status"),
+    supabase
+      .from("automation_runs")
+      .select("id,status,detected_count,created_count,resolved_count,error_message,started_at,completed_at")
+      .eq("workflow", "exception-engine")
+      .order("started_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
   const openTasks = tasksResult.data ?? [];
   const clients = clientsResult.data ?? [];
@@ -196,11 +214,13 @@ export async function getOperationsDashboardData() {
       active: clients.filter((client) => client.status === "actief").length,
       startedThisMonth: clients.filter((client) => client.start_date && client.start_date >= monthStart).length,
     },
+    automation: (automationResult.data ?? null) as AutomationRun | null,
     errors: [
       snapshotResult.error,
       statusesResult.error?.message,
       tasksResult.error?.message,
       clientsResult.error?.message,
+      automationResult.error?.message,
     ].filter((value): value is string => Boolean(value)),
   };
 }

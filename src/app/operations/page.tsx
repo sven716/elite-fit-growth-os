@@ -36,6 +36,38 @@ export default async function OperationsPage() {
 
       {data.errors.length > 0 ? <div className="rounded-2xl border border-terra/30 bg-terra/10 p-4 text-sm text-light/65">{data.errors[0]}</div> : null}
 
+      <section className="ef-card p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-bold tracking-[0.18em] text-terra uppercase">
+              Uitzonderingsmotor
+            </p>
+            <h2 className="mt-1 font-black text-light">
+              {data.automation?.status === "geslaagd"
+                ? `${data.automation.detected_count} actuele afwijkingen`
+                : data.automation?.status === "fout"
+                  ? "Laatste controle mislukt"
+                  : "Nog niet uitgevoerd"}
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-light/40">
+              Controleert dagelijks koppelingen, administratie, sales, content en coaching.
+              Alleen situaties die menselijk werk vragen worden als taak aangemaakt.
+            </p>
+          </div>
+          <div className="text-right text-xs text-light/35">
+            <p>{data.automation ? formatDateTime(data.automation.completed_at ?? data.automation.started_at) : "Eerste controle volgt automatisch"}</p>
+            {data.automation?.status === "geslaagd" ? (
+              <p className="mt-1">{data.automation.created_count} nieuw · {data.automation.resolved_count} opgelost</p>
+            ) : null}
+          </div>
+        </div>
+        {data.automation?.error_message ? (
+          <p className="mt-4 rounded-xl border border-terra/25 bg-terra/10 p-3 text-xs text-light/60">
+            {data.automation.error_message}
+          </p>
+        ) : null}
+      </section>
+
       <section>
         <h2 className="mb-3 text-[11px] font-bold tracking-[0.18em] text-light/40 uppercase">Koppelingen</h2>
         <div className="space-y-2">

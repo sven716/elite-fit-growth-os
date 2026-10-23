@@ -26,6 +26,7 @@ function TaskRow({
   const meta = [
     task.due_date ? formatShortDate(task.due_date) : null,
     task.category === "opvolgen" ? "opvolgen" : null,
+    task.source === "automation" ? "automatisch" : null,
     project,
   ]
     .filter(Boolean)
@@ -44,38 +45,42 @@ function TaskRow({
           }}
         />
       </div>
-      <form
-        action={async () => {
-          "use server";
-          await setTaskPriority(
-            task.id,
-            task.priority === "hoog" ? "normaal" : "hoog",
-          );
-        }}
-      >
-        <button
-          type="submit"
-          aria-label={
-            task.priority === "hoog"
-              ? "Prioriteit verwijderen"
-              : "Als prioriteit markeren"
-          }
-          className={`rounded-md border px-2 py-1 text-[10px] font-bold uppercase transition-colors ${
-            task.priority === "hoog"
-              ? "border-terra/50 bg-terra/10 text-terra"
-              : "border-light/10 text-light/30 hover:border-terra/30 hover:text-terra"
-          }`}
-        >
-          Prio
-        </button>
-      </form>
-      <DeleteButton
-        label="×"
-        onDelete={async () => {
-          "use server";
-          await deleteTask(task.id);
-        }}
-      />
+      {task.auto_managed ? null : (
+        <>
+          <form
+            action={async () => {
+              "use server";
+              await setTaskPriority(
+                task.id,
+                task.priority === "hoog" ? "normaal" : "hoog",
+              );
+            }}
+          >
+            <button
+              type="submit"
+              aria-label={
+                task.priority === "hoog"
+                  ? "Prioriteit verwijderen"
+                  : "Als prioriteit markeren"
+              }
+              className={`rounded-md border px-2 py-1 text-[10px] font-bold uppercase transition-colors ${
+                task.priority === "hoog"
+                  ? "border-terra/50 bg-terra/10 text-terra"
+                  : "border-light/10 text-light/30 hover:border-terra/30 hover:text-terra"
+              }`}
+            >
+              Prio
+            </button>
+          </form>
+          <DeleteButton
+            label="×"
+            onDelete={async () => {
+              "use server";
+              await deleteTask(task.id);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
