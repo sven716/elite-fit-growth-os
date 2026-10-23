@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/automations/exceptions",
+      "schedule": "5 23 * * *"
+    }
+  ]
+}

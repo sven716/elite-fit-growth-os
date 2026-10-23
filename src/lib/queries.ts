@@ -31,8 +31,12 @@ export type Task = {
   category: "todo" | "opvolgen";
   priority: "normaal" | "hoog";
   area: WorkArea;
-  source: "handmatig" | "plaud" | "fathom" | "ghl";
+  source: "handmatig" | "plaud" | "fathom" | "ghl" | "automation";
   project_id: string | null;
+  description: string | null;
+  action_url: string | null;
+  auto_managed: boolean;
+  last_seen_at: string | null;
 };
 
 export type UpcomingEvent = {
@@ -112,7 +116,7 @@ export async function getCockpitData() {
     supabase
       .from("tasks")
       .select(
-        "id, title, status, due_date, category, priority, area, source, project_id",
+        "id, title, status, due_date, category, priority, area, source, project_id, description, action_url, auto_managed, last_seen_at",
       )
       .eq("status", "open")
       .or(`priority.eq.hoog,due_date.lte.${day}`)
@@ -299,7 +303,7 @@ export async function getProject(id: string) {
     supabase
       .from("tasks")
       .select(
-        "id, title, status, due_date, category, priority, area, source, project_id",
+        "id, title, status, due_date, category, priority, area, source, project_id, description, action_url, auto_managed, last_seen_at",
       )
       .eq("project_id", id)
       .order("status")
@@ -331,7 +335,7 @@ export async function getTasksGrouped() {
     supabase
       .from("tasks")
       .select(
-        "id, title, status, due_date, category, priority, area, source, project_id",
+        "id, title, status, due_date, category, priority, area, source, project_id, description, action_url, auto_managed, last_seen_at",
       )
       .order("status")
       .order("priority", { ascending: true })
