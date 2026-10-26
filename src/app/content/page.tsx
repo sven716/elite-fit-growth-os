@@ -123,7 +123,13 @@ export default async function ContentPage() {
         )}
       </section>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Link href="/content/tests" className="ef-card p-5 transition-colors hover:border-terra/25">
+          <p className="font-black text-light">Split-tests</p>
+          <p className="mt-1 text-sm text-light/40">
+            Varianten, scores, conclusies en leerregels
+          </p>
+        </Link>
         <Link href="/groei" className="ef-card p-5 transition-colors hover:border-terra/25">
           <p className="font-black text-light">Prestaties</p>
           <p className="mt-1 text-sm text-light/40">

@@ -539,3 +539,99 @@ export async function getContentIdeas() {
 
   return (data ?? []) as ContentIdea[];
 }
+
+/* ---------- Contentexperimenten ---------- */
+
+export type ContentExperimentVariant = {
+  id: string;
+  experiment_id: string;
+  code: string;
+  hook: string;
+  change_description: string | null;
+  status: string;
+  duration_seconds: number | null;
+  external_media_id: string | null;
+  output_path: string | null;
+  views_24h: number | null;
+  reach_24h: number | null;
+  skip_rate_24h: number | null;
+  avg_watch_time_ms_24h: number | null;
+  saved_24h: number | null;
+  shares_24h: number | null;
+  comments_24h: number | null;
+  score_24h: number | null;
+  views_72h: number | null;
+  reach_72h: number | null;
+  skip_rate_72h: number | null;
+  avg_watch_time_ms_72h: number | null;
+  saved_72h: number | null;
+  shares_72h: number | null;
+  comments_72h: number | null;
+  score_72h: number | null;
+  conversations: number | null;
+  qualified_leads: number | null;
+  score_note: string | null;
+  is_winner: boolean;
+};
+
+export type ContentExperiment = {
+  id: string;
+  batch_id: string;
+  title: string;
+  topic: string;
+  format: string;
+  objective: "hook" | "bereik" | "interactie" | "gesprekken";
+  status: string;
+  source_ref: string | null;
+  started_at: string | null;
+  ended_at: string | null;
+  winner_variant_code: string | null;
+  conclusion_observation: string | null;
+  interpretation: string | null;
+  next_rule: string | null;
+  next_hypothesis: string | null;
+  evidence_strength: "signaal" | "patroon" | "sterk_patroon";
+  created_at: string;
+  variants: ContentExperimentVariant[];
+};
+
+export type ContentExperimentLearning = {
+  id: string;
+  category: string;
+  rule: string;
+  status: "signaal" | "patroon" | "bevestigd" | "verworpen";
+  evidence_count: number;
+  supporting_batch_ids: string[];
+  last_observed_at: string;
+  next_hypothesis: string | null;
+};
+
+export async function getContentExperiments() {
+  const supabase = await createClient();
+  const [experimentsRes, learningsRes] = await Promise.all([
+    supabase
+      .from("content_experiments")
+      .select(
+        "id, batch_id, title, topic, format, objective, status, source_ref, started_at, ended_at, winner_variant_code, conclusion_observation, interpretation, next_rule, next_hypothesis, evidence_strength, created_at, variants:content_experiment_variants(id, experiment_id, code, hook, change_description, status, duration_seconds, external_media_id, output_path, views_24h, reach_24h, skip_rate_24h, avg_watch_time_ms_24h, saved_24h, shares_24h, comments_24h, score_24h, views_72h, reach_72h, skip_rate_72h, avg_watch_time_ms_72h, saved_72h, shares_72h, comments_72h, score_72h, conversations, qualified_leads, score_note, is_winner)",
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("content_experiment_learnings")
+      .select(
+        "id, category, rule, status, evidence_count, supporting_batch_ids, last_observed_at, next_hypothesis",
+      )
+      .neq("status", "verworpen")
+      .order("evidence_count", { ascending: false })
+      .order("last_observed_at", { ascending: false }),
+  ]);
+
+  const errors = [experimentsRes.error?.message, learningsRes.error?.message].filter(
+    (value): value is string => Boolean(value),
+  );
+
+  return {
+    experiments: (experimentsRes.data ?? []) as ContentExperiment[],
+    learnings: (learningsRes.data ?? []) as ContentExperimentLearning[],
+    errors,
+  };
+}
