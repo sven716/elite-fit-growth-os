@@ -12,6 +12,7 @@ import sys
 import tempfile
 import urllib.error
 import urllib.request
+import fcntl
 
 BASE_URL = os.environ.get("GROWTH_OS_URL", "https://elite-fit-growth-os.vercel.app").rstrip("/")
 WORKDIR = os.environ.get("GROWTH_OS_WORKDIR", "/Users/sven/Documents/Cowork OS")
@@ -159,6 +160,14 @@ def save_memory(secret: str, message: dict, profile: str, items: list[dict]) -> 
 
 
 def main() -> int:
+    lock_path = Path.home() / ".hermes/cache/project_chat_worker.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    lock_handle = lock_path.open("w")
+    try:
+        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        return 0
+
     try:
         secret = load_secret()
         queue = request_json("GET", "/api/project-chat/queue", secret)
