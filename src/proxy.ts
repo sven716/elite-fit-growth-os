@@ -3,7 +3,12 @@ import { updateSession } from "@/lib/supabase/proxy";
 
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  if (path.startsWith("/api/ghl/") || path.startsWith("/api/automations/")) {
+  if (
+    path.startsWith("/api/ghl/") ||
+    path.startsWith("/api/automations/") ||
+    path.startsWith("/api/project-chat/") ||
+    path.startsWith("/api/projecten/capture")
+  ) {
     return NextResponse.next();
   }
   return updateSession(request);
