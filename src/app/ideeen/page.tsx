@@ -1,6 +1,7 @@
 import { SectionHeading } from "@/components/SectionHeading";
 import {
   createContentIdea,
+  discussContentIdea,
   setContentIdeaStatus,
 } from "@/lib/actions";
 import {
@@ -67,18 +68,29 @@ function IdeaCard({ idea }: { idea: ContentIdea }) {
         </span>
       </div>
 
-      {idea.status === "goedgekeurd" || idea.status === "uitwerken" ? (
-        <form action={setContentIdeaStatus} className="mt-4">
-          <input type="hidden" name="id" value={idea.id} />
-          <input type="hidden" name="status" value={nextStatus} />
+      <div className="mt-4 flex flex-wrap gap-2">
+        {idea.status === "goedgekeurd" || idea.status === "uitwerken" ? (
+          <form action={setContentIdeaStatus}>
+            <input type="hidden" name="id" value={idea.id} />
+            <input type="hidden" name="status" value={nextStatus} />
+            <button
+              type="submit"
+              className="rounded-lg border border-terra/50 px-3 py-2 text-xs font-bold text-terra transition-colors hover:bg-terra/10"
+            >
+              {idea.status === "uitwerken" ? "Terug in bank" : "Kies om uit te werken"}
+            </button>
+          </form>
+        ) : null}
+        <form action={discussContentIdea}>
+          <input type="hidden" name="idea_id" value={idea.id} />
           <button
             type="submit"
-            className="rounded-lg border border-terra/50 px-3 py-2 text-xs font-bold text-terra transition-colors hover:bg-terra/10"
+            className="rounded-lg border border-light/15 px-3 py-2 text-xs font-bold text-light/65 transition-colors hover:border-terra/50 hover:text-terra"
           >
-            {idea.status === "uitwerken" ? "Terug in bank" : "Kies om uit te werken"}
+            Bespreek met Marketing
           </button>
         </form>
-      ) : null}
+      </div>
     </article>
   );
 }

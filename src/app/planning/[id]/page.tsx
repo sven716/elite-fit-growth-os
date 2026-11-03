@@ -13,6 +13,8 @@ import {
   updateProject,
   deleteProject,
   createApprovedContentAsset,
+  createProjectItem,
+  createProjectThread,
 } from "@/lib/actions";
 import { daysUntil, formatShortDate } from "@/lib/dates";
 
@@ -34,7 +36,7 @@ export default async function ProjectDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { project, contacts, tasks, emails } = await getProject(id);
+  const { project, contacts, tasks, emails, threads, items } = await getProject(id);
 
   if (!project) notFound();
 
@@ -56,10 +58,10 @@ export default async function ProjectDetailPage({
     <div className="space-y-8">
       <div>
         <Link
-          href="/planning"
+          href="/projecten"
           className="text-xs font-bold tracking-wide text-light/40 uppercase transition-colors hover:text-terra"
         >
-          ← Planning
+          ← Projecten
         </Link>
         <div className="mt-3 flex items-start justify-between gap-4">
           <div>
@@ -84,6 +86,177 @@ export default async function ProjectDetailPage({
           ) : null}
         </div>
       </div>
+
+      {/* Gesprekken met bots */}
+      <section className="ef-card p-5">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-[11px] font-bold tracking-[0.18em] text-light/40 uppercase">
+              Gesprekken
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-light/60">
+              Ieder onderwerp houdt zijn eigen gesprek en geheugen. Kies de bot die
+              het beste bij het onderwerp past.
+            </p>
+          </div>
+          <span className="rounded-full bg-terra/12 px-2.5 py-1 text-xs font-bold text-terra">
+            {threads.length}
+          </span>
+        </div>
+
+        {threads.length > 0 ? (
+          <div className="mb-5 space-y-2">
+            {threads.map((thread) => (
+              <Link
+                key={thread.id}
+                href={`/projecten/${project.id}/gesprekken/${thread.id}`}
+                className="flex items-center justify-between gap-3 rounded-lg border border-light/8 bg-light/[0.03] p-3 transition-colors hover:border-terra/30"
+              >
+                <div className="min-w-0">
+                  <p className="truncate font-bold text-light">{thread.title}</p>
+                  <p className="mt-1 text-[10px] font-bold tracking-wide text-light/35 uppercase">
+                    {thread.topic_type.replace("_", " ")} · {thread.bot_profile}
+                  </p>
+                </div>
+                <span className="text-light/25">›</span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p className="mb-5 text-sm text-light/45">Nog geen gesprekken.</p>
+        )}
+
+        <details>
+          <summary className="cursor-pointer text-xs font-bold text-terra">
+            Nieuw gesprek starten
+          </summary>
+          <form action={createProjectThread} className="mt-4 grid gap-2 sm:grid-cols-2">
+            <input type="hidden" name="project_id" value={project.id} />
+            <input
+              name="title"
+              required
+              placeholder="Onderwerp van het gesprek"
+              className="rounded-lg border border-light/12 bg-light/5 px-3 py-2 text-sm text-light outline-none focus:border-terra/60 sm:col-span-2"
+            />
+            <select
+              name="topic_type"
+              className="rounded-lg border border-light/12 bg-bg px-3 py-2 text-sm text-light outline-none focus:border-terra/60"
+            >
+              <option value="algemeen">Algemeen</option>
+              <option value="content_idee">Contentidee</option>
+              <option value="onderzoek">Onderzoek</option>
+              <option value="besluit">Besluit</option>
+              <option value="uitvoering">Uitvoering</option>
+            </select>
+            <select
+              name="bot_profile"
+              className="rounded-lg border border-light/12 bg-bg px-3 py-2 text-sm text-light outline-none focus:border-terra/60"
+            >
+              <option value="default">Jarvis</option>
+              <option value="marketing">Marketing</option>
+              <option value="sales">Sales</option>
+              <option value="coaching">Coaching</option>
+              <option value="operations">Operations</option>
+            </select>
+            <textarea
+              name="message"
+              rows={4}
+              placeholder="Waar wil je over doorgaan?"
+              className="rounded-lg border border-light/12 bg-light/5 px-3 py-2 text-sm text-light outline-none focus:border-terra/60 sm:col-span-2"
+            />
+            <button
+              type="submit"
+              className="rounded-lg border border-terra/50 px-4 py-2 text-sm font-bold text-terra transition-colors hover:bg-terra/10 sm:col-span-2"
+            >
+              Gesprek starten
+            </button>
+          </form>
+        </details>
+      </section>
+
+      {/* Projectgeheugen */}
+      <section className="ef-card p-5">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-[11px] font-bold tracking-[0.18em] text-light/40 uppercase">
+              Projectgeheugen
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-light/60">
+              Ideeën, besluiten, vragen, bronnen en voortgang uit alle gesprekken.
+            </p>
+          </div>
+          <span className="rounded-full bg-light/5 px-2.5 py-1 text-xs font-bold text-light/50">
+            {items.length}
+          </span>
+        </div>
+
+        {items.length > 0 ? (
+          <div className="mb-5 space-y-3">
+            {items.map((item) => (
+              <article
+                key={item.id}
+                className="rounded-lg border border-light/8 bg-light/[0.03] p-3"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-terra/35 px-2 py-0.5 text-[10px] font-bold tracking-wide text-terra uppercase">
+                    {item.item_type}
+                  </span>
+                  {item.created_by_profile ? (
+                    <span className="text-[10px] text-light/35">
+                      {item.created_by_profile}
+                    </span>
+                  ) : null}
+                </div>
+                <p className="mt-2 font-bold text-light">{item.title}</p>
+                {item.content ? (
+                  <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-light/60">
+                    {item.content}
+                  </p>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="mb-5 text-sm text-light/45">Nog niets vastgelegd.</p>
+        )}
+
+        <details>
+          <summary className="cursor-pointer text-xs font-bold text-terra">
+            Handmatig toevoegen
+          </summary>
+          <form action={createProjectItem} className="mt-4 grid gap-2 sm:grid-cols-2">
+            <input type="hidden" name="project_id" value={project.id} />
+            <select
+              name="item_type"
+              className="rounded-lg border border-light/12 bg-bg px-3 py-2 text-sm text-light outline-none focus:border-terra/60"
+            >
+              <option value="idee">Idee</option>
+              <option value="besluit">Besluit</option>
+              <option value="vraag">Open vraag</option>
+              <option value="voortgang">Voortgang</option>
+              <option value="bron">Bron</option>
+            </select>
+            <input
+              name="title"
+              required
+              placeholder="Korte titel"
+              className="rounded-lg border border-light/12 bg-light/5 px-3 py-2 text-sm text-light outline-none focus:border-terra/60"
+            />
+            <textarea
+              name="content"
+              rows={3}
+              placeholder="Toelichting"
+              className="rounded-lg border border-light/12 bg-light/5 px-3 py-2 text-sm text-light outline-none focus:border-terra/60 sm:col-span-2"
+            />
+            <button
+              type="submit"
+              className="rounded-lg border border-terra/50 px-4 py-2 text-sm font-bold text-terra transition-colors hover:bg-terra/10 sm:col-span-2"
+            >
+              Opslaan in projectgeheugen
+            </button>
+          </form>
+        </details>
+      </section>
 
       {/* Taken */}
       <section className="ef-card p-5">
@@ -459,7 +632,7 @@ export default async function ProjectDetailPage({
             onDelete={async () => {
               "use server";
               await deleteProject(project.id);
-              redirect("/planning");
+              redirect("/projecten");
             }}
           />
         </div>
