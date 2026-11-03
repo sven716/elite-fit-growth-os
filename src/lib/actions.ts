@@ -1,6 +1,8 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { today } from "@/lib/dates";
 import { isWorkArea } from "@/lib/work-areas";
@@ -9,6 +11,7 @@ function refreshAll() {
   revalidatePath("/");
   revalidatePath("/doelen");
   revalidatePath("/planning");
+  revalidatePath("/projecten");
   revalidatePath("/taken");
   revalidatePath("/winnaarsformule");
   revalidatePath("/klanten");
@@ -231,6 +234,197 @@ export async function createProject(formData: FormData) {
     description: description || null,
   });
   refreshAll();
+}
+
+const PROJECT_TOPIC_TYPES = [
+  "algemeen",
+  "content_idee",
+  "onderzoek",
+  "besluit",
+  "uitvoering",
+] as const;
+
+const PROJECT_BOT_PROFILES = [
+  "default",
+  "marketing",
+  "sales",
+  "coaching",
+  "operations",
+] as const;
+
+export async function createProjectThread(formData: FormData) {
+  const supabase = await createClient();
+  const projectId = String(formData.get("project_id") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim();
+  const initialMessage = String(formData.get("message") ?? "").trim();
+  if (!projectId || !title) return;
+
+  const topicInput = String(formData.get("topic_type") ?? "algemeen");
+  const topicType = PROJECT_TOPIC_TYPES.includes(
+    topicInput as (typeof PROJECT_TOPIC_TYPES)[number],
+  )
+    ? topicInput
+    : "algemeen";
+  const profileInput = String(formData.get("bot_profile") ?? "default");
+  const botProfile = PROJECT_BOT_PROFILES.includes(
+    profileInput as (typeof PROJECT_BOT_PROFILES)[number],
+  )
+    ? profileInput
+    : "default";
+  const threadId = randomUUID();
+  const linkedContentIdeaId = String(
+    formData.get("linked_content_idea_id") ?? "",
+  ).trim();
+
+  const { error: threadError } = await supabase.from("project_threads").insert({
+    id: threadId,
+    project_id: projectId,
+    title,
+    topic_type: topicType,
+    bot_profile: botProfile,
+    linked_content_idea_id: linkedContentIdeaId || null,
+    hermes_session_name: `growth-os-${projectId}-${threadId}`,
+  });
+  if (threadError) throw new Error(`Gesprek aanmaken mislukt: ${threadError.message}`);
+
+  if (initialMessage) {
+    const { error: messageError } = await supabase.from("project_messages").insert({
+      project_id: projectId,
+      thread_id: threadId,
+      role: "user",
+      content: initialMessage,
+      status: "pending",
+      source_ref: `growth-os:web:${randomUUID()}`,
+    });
+    if (messageError) {
+      throw new Error(`Eerste bericht opslaan mislukt: ${messageError.message}`);
+    }
+  }
+
+  refreshAll();
+  redirect(`/projecten/${projectId}/gesprekken/${threadId}`);
+}
+
+export async function createProjectMessage(formData: FormData) {
+  const supabase = await createClient();
+  const projectId = String(formData.get("project_id") ?? "").trim();
+  const threadId = String(formData.get("thread_id") ?? "").trim();
+  const content = String(formData.get("content") ?? "").trim();
+  if (!projectId || !threadId || !content) return;
+
+  const { error } = await supabase.from("project_messages").insert({
+    project_id: projectId,
+    thread_id: threadId,
+    role: "user",
+    content,
+    status: "pending",
+    source_ref: `growth-os:web:${randomUUID()}`,
+  });
+  if (error) throw new Error(`Bericht versturen mislukt: ${error.message}`);
+
+  revalidatePath(`/projecten/${projectId}`);
+  revalidatePath(`/projecten/${projectId}/gesprekken/${threadId}`);
+}
+
+export async function createProjectItem(formData: FormData) {
+  const supabase = await createClient();
+  const projectId = String(formData.get("project_id") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim();
+  if (!projectId || !title) return;
+
+  const allowed = ["idee", "besluit", "vraag", "voortgang", "bron"];
+  const itemTypeInput = String(formData.get("item_type") ?? "voortgang");
+  const { error } = await supabase.from("project_items").insert({
+    project_id: projectId,
+    item_type: allowed.includes(itemTypeInput) ? itemTypeInput : "voortgang",
+    title,
+    content: String(formData.get("content") ?? "").trim() || null,
+    source: "handmatig",
+    created_by_profile: "sven",
+  });
+  if (error) throw new Error(`Projectgeheugen bijwerken mislukt: ${error.message}`);
+  revalidatePath(`/projecten/${projectId}`);
+}
+
+export async function discussContentIdea(formData: FormData) {
+  const supabase = await createClient();
+  const ideaId = String(formData.get("idea_id") ?? "").trim();
+  if (!ideaId) return;
+
+  const { data: idea, error: ideaError } = await supabase
+    .from("content_ideas")
+    .select("id, title, topic, format, hook, notes")
+    .eq("id", ideaId)
+    .single();
+  if (ideaError || !idea) throw new Error("Contentidee niet gevonden.");
+
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) return;
+  let { data: project } = await supabase
+    .from("projects")
+    .select("id")
+    .eq("user_id", user.user.id)
+    .ilike("name", "Content")
+    .limit(1)
+    .maybeSingle();
+
+  if (!project) {
+    const result = await supabase
+      .from("projects")
+      .insert({
+        name: "Content",
+        kind: "doorlopend",
+        description: "Contentideeën, uitwerking en goedgekeurde inhoud.",
+      })
+      .select("id")
+      .single();
+    if (result.error) throw new Error(`Contentproject aanmaken mislukt: ${result.error.message}`);
+    project = result.data;
+  }
+
+  const { data: existing } = await supabase
+    .from("project_threads")
+    .select("id")
+    .eq("project_id", project.id)
+    .eq("linked_content_idea_id", idea.id)
+    .eq("status", "actief")
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) redirect(`/projecten/${project.id}/gesprekken/${existing.id}`);
+
+  const threadId = randomUUID();
+  const { error: threadError } = await supabase.from("project_threads").insert({
+    id: threadId,
+    project_id: project.id,
+    title: idea.title,
+    topic_type: "content_idee",
+    bot_profile: "marketing",
+    linked_content_idea_id: idea.id,
+    hermes_session_name: `growth-os-${project.id}-${threadId}`,
+    source_ref: `content-idea:${idea.id}`,
+  });
+  if (threadError) throw new Error(`Contentgesprek aanmaken mislukt: ${threadError.message}`);
+
+  const details = [
+    `Ik wil dit contentidee verder uitwerken: ${idea.title}.`,
+    `Onderwerp: ${idea.topic}. Vorm: ${idea.format}.`,
+    idea.hook ? `Hook: ${idea.hook}` : null,
+    idea.notes ? `Notities: ${idea.notes}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  const { error: messageError } = await supabase.from("project_messages").insert({
+    project_id: project.id,
+    thread_id: threadId,
+    role: "user",
+    content: details,
+    status: "pending",
+    source_ref: `content-idea:start:${idea.id}`,
+  });
+  if (messageError) throw new Error(`Contentidee versturen mislukt: ${messageError.message}`);
+
+  redirect(`/projecten/${project.id}/gesprekken/${threadId}`);
 }
 
 export async function ensureContentProject() {

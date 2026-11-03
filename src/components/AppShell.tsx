@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const ALL_NAV = [
   { href: "/", label: "Vandaag" },
   { href: "/taken", label: "Taken" },
+  { href: "/projecten", label: "Projecten" },
   { href: "/content", label: "Content" },
   { href: "/sales", label: "Sales" },
   { href: "/coaching", label: "Coaching" },
@@ -28,6 +29,8 @@ const PRIMARY_NAV = [
 /** Schermen die onder "Meer" vallen — bepaalt of die knop actief oogt. */
 const UNDER_MORE = [
   "/meer",
+  "/projecten",
+  "/planning",
   "/coaching",
   "/operations",
   "/administratie",
@@ -42,6 +45,10 @@ const UNDER_MORE = [
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   if (href === "/meer") return UNDER_MORE.some((p) => pathname.startsWith(p));
+  if (href === "/projecten")
+    return ["/projecten", "/planning"].some((path) =>
+      pathname.startsWith(path),
+    );
   if (href === "/content")
     return ["/content", "/ideeen", "/goedkeuringen", "/groei"].some(
       (path) => pathname === path || pathname.startsWith(`${path}/`),
@@ -50,10 +57,7 @@ function isActive(pathname: string, href: string) {
     return ["/coaching", "/klanten", "/meer/gainz-"].some((path) =>
       pathname.startsWith(path),
     );
-  if (href === "/operations")
-    return ["/operations", "/planning"].some((path) =>
-      pathname.startsWith(path),
-    );
+  if (href === "/operations") return pathname.startsWith("/operations");
   if (href === "/administratie")
     return ["/administratie", "/financien", "/kosten"].some((path) =>
       pathname.startsWith(path),

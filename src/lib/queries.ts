@@ -286,42 +286,121 @@ export type ProjectEmail = {
   needs_reply: boolean | null;
 };
 
+export type ProjectThread = {
+  id: string;
+  title: string;
+  topic_type: "algemeen" | "content_idee" | "onderzoek" | "besluit" | "uitvoering";
+  bot_profile: "default" | "marketing" | "sales" | "coaching" | "operations";
+  linked_content_idea_id: string | null;
+  status: "actief" | "afgerond" | "gearchiveerd";
+  updated_at: string;
+};
+
+export type ProjectItem = {
+  id: string;
+  item_type: "idee" | "besluit" | "vraag" | "voortgang" | "bron";
+  title: string;
+  content: string | null;
+  status: string;
+  source: string;
+  created_by_profile: string | null;
+  created_at: string;
+};
+
+export type ProjectMessage = {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  error: string | null;
+  created_at: string;
+};
+
 export async function getProject(id: string) {
   const supabase = await createClient();
 
-  const [projectRes, contactsRes, tasksRes, emailsRes] = await Promise.all([
-    supabase
-      .from("projects")
-      .select("id, name, kind, event_date, status, description")
-      .eq("id", id)
-      .maybeSingle(),
-    supabase
-      .from("project_contacts")
-      .select("id, name, company, email, role, notes")
-      .eq("project_id", id)
-      .order("name"),
-    supabase
-      .from("tasks")
-      .select(
-        "id, title, status, due_date, category, priority, area, source, project_id, description, action_url, auto_managed, last_seen_at",
-      )
-      .eq("project_id", id)
-      .order("status")
-      .order("due_date", { nullsFirst: false }),
-    supabase
-      .from("project_emails")
-      .select(
-        "id, thread_id, subject, participants, snippet, last_date, message_count, needs_reply",
-      )
-      .eq("project_id", id)
-      .order("last_date", { ascending: false }),
-  ]);
+  const [projectRes, contactsRes, tasksRes, emailsRes, threadsRes, itemsRes] =
+    await Promise.all([
+      supabase
+        .from("projects")
+        .select("id, name, kind, event_date, status, description")
+        .eq("id", id)
+        .maybeSingle(),
+      supabase
+        .from("project_contacts")
+        .select("id, name, company, email, role, notes")
+        .eq("project_id", id)
+        .order("name"),
+      supabase
+        .from("tasks")
+        .select(
+          "id, title, status, due_date, category, priority, area, source, project_id, description, action_url, auto_managed, last_seen_at",
+        )
+        .eq("project_id", id)
+        .order("status")
+        .order("due_date", { nullsFirst: false }),
+      supabase
+        .from("project_emails")
+        .select(
+          "id, thread_id, subject, participants, snippet, last_date, message_count, needs_reply",
+        )
+        .eq("project_id", id)
+        .order("last_date", { ascending: false }),
+      supabase
+        .from("project_threads")
+        .select(
+          "id, title, topic_type, bot_profile, linked_content_idea_id, status, updated_at",
+        )
+        .eq("project_id", id)
+        .neq("status", "gearchiveerd")
+        .order("updated_at", { ascending: false }),
+      supabase
+        .from("project_items")
+        .select(
+          "id, item_type, title, content, status, source, created_by_profile, created_at",
+        )
+        .eq("project_id", id)
+        .neq("status", "gearchiveerd")
+        .order("created_at", { ascending: false }),
+    ]);
 
   return {
     project: (projectRes.data ?? null) as Project | null,
     contacts: contactsRes.data ?? [],
     tasks: (tasksRes.data ?? []) as Task[],
     emails: (emailsRes.data ?? []) as ProjectEmail[],
+    threads: (threadsRes.data ?? []) as ProjectThread[],
+    items: (itemsRes.data ?? []) as ProjectItem[],
+  };
+}
+
+export async function getProjectThread(projectId: string, threadId: string) {
+  const supabase = await createClient();
+  const [projectRes, threadRes, messagesRes] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("id, name, kind, event_date, status, description")
+      .eq("id", projectId)
+      .maybeSingle(),
+    supabase
+      .from("project_threads")
+      .select(
+        "id, title, topic_type, bot_profile, linked_content_idea_id, status, updated_at",
+      )
+      .eq("id", threadId)
+      .eq("project_id", projectId)
+      .maybeSingle(),
+    supabase
+      .from("project_messages")
+      .select("id, role, content, status, error, created_at")
+      .eq("thread_id", threadId)
+      .order("created_at"),
+  ]);
+
+  return {
+    project: (projectRes.data ?? null) as Project | null,
+    thread: (threadRes.data ?? null) as ProjectThread | null,
+    messages: (messagesRes.data ?? []) as ProjectMessage[],
   };
 }
 

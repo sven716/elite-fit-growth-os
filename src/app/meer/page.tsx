@@ -3,6 +3,11 @@ import { SectionHeading } from "@/components/SectionHeading";
 
 const LINKS = [
   {
+    href: "/projecten",
+    label: "Projecten",
+    hint: "Gesprekken, projectgeheugen, besluiten en ideeën per onderwerp",
+  },
+  {
     href: "/coaching",
     label: "Coaching",
     hint: "Klanten, reviews en concrete vervolgacties",
