@@ -102,8 +102,6 @@ Laat het blok volledig weg als er niets blijvends is. Zet nooit klantgegevens, g
             "tool",
             "--in",
             WORKDIR,
-            "--run-budget",
-            "240",
         ]
         result = subprocess.run(command, capture_output=True, text=True, timeout=300)
         if result.returncode != 0:
